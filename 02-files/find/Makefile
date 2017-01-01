@@ -1,27 +1,31 @@
 OCB_FLAGS = -use-ocamlfind -I src
 OCB       = ocamlbuild $(OCB_FLAGS)
 
-all: native byte
+FILES   = find exercise1 getcwd
+NATIVES = $(addsuffix .native, $(FILES))
+BYTES   = $(addsuffix .byte,   $(FILES))
+
+all: $(NATIVES) $(BYTES)
 
 clean:
 	$(OCB) -clean
 
-native: sanity
-	$(OCB) find.native
+%.native: sanity
+	$(OCB) $@
 
-byte: sanity
-	$(OCB) find.byte
+%.byte: sanity
+	$(OCB) $@
 
 profile: sanity
-	$(OCB) -tag profile find.native
+	$(OCB) -tag profile $(NATIVES)
 
 debug: sanity
-	$(OCB) -tag debug find.byte
+	$(OCB) -tag debug $(BYTES)
 
 sanity:
 	ocamlfind query unix
 
-test: native
-	./find.native
+test: $(NATIVES)
+	./getcwd.native
 
-.PHONY: all clean byte native profile debug sanity test
+.PHONY: all clean profile debug sanity test
