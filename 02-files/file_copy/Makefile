@@ -29,7 +29,7 @@ test: native
 	@echo "Test Directory: $(TESTDIR)"
 	@echo "========================================="
 	mkdir -p $(TESTDIR)
-	dd if=/dev/urandom of=$(TESTDIR)/source bs=1M count=1
+	dd if=/dev/urandom of=$(TESTDIR)/source bs=1048576 count=1
 	@echo
 	@echo "======="
 	@echo "Test 1:"
