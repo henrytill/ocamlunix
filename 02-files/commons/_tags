@@ -1,0 +1,2 @@
+<src/main.{byte,native}>: use_unix, use_commons
+"lib": include
