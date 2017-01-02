@@ -1,6 +1,8 @@
 OCB_FLAGS = -use-ocamlfind -I src
 OCB       = ocamlbuild $(OCB_FLAGS)
 
+TESTDIR := $(shell mktemp -d /tmp/file_copy.XXXXXXXXXX)
+
 all: native byte
 
 clean:
@@ -22,6 +24,30 @@ sanity:
 	ocamlfind query unix
 
 test: native
-	./file_copy.native
+	@echo
+	@echo "========================================="
+	@echo "Test Directory: $(TESTDIR)"
+	@echo "========================================="
+	mkdir -p $(TESTDIR)
+	dd if=/dev/urandom of=$(TESTDIR)/source bs=1M count=1
+	@echo
+	@echo "======="
+	@echo "Test 1:"
+	@echo "======="
+	./file_copy.native $(TESTDIR)/source $(TESTDIR)/copy
+	cmp -s $(TESTDIR)/source $(TESTDIR)/copy
+	@echo "PASSED!"
+	@echo
+	@echo "======="
+	@echo "Test 2:"
+	@echo "======="
+	./file_copy.native -a $(TESTDIR)/source $(TESTDIR)/copy
+	cat $(TESTDIR)/source $(TESTDIR)/source | cmp -s $(TESTDIR)/copy
+	@echo "PASSED!"
+	@echo
+	@echo "All tests passed!"
+	@echo
+	@echo "Cleaning up..."
+	@rm -r $(TESTDIR)
 
 .PHONY: all clean byte native profile debug sanity test
