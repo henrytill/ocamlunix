@@ -59,6 +59,36 @@ let output_char chan c =
       chan.out_pos <- 1
     end
 
+let output_string chan s =
+  let avail = String.length chan.out_buffer - chan.out_pos in
+  let len = String.length s in
+  if len <= avail then
+    begin
+      Bytes.blit s 0 chan.out_buffer chan.out_pos len;
+      chan.out_pos <- chan.out_pos + len
+    end
+  else if chan.out_pos = 0 then
+    begin
+      ignore (write chan.out_fd s 0 len)
+    end
+  else
+    begin
+      Bytes.blit s 0 chan.out_buffer chan.out_pos avail;
+      let out_buffer_size = String.length chan.out_buffer in
+      ignore (write chan.out_fd chan.out_buffer 0 out_buffer_size);
+      let remaining = len - avail in
+      if remaining < out_buffer_size then
+        begin
+          Bytes.blit s avail chan.out_buffer 0 remaining;
+          chan.out_pos <- remaining
+        end
+      else
+        begin
+          ignore (write chan.out_fd s avail remaining);
+          chan.out_pos <- 0
+        end
+    end
+
 let close_out chan =
   ignore (write chan.out_fd chan.out_buffer 0 chan.out_pos);
   close chan.out_fd

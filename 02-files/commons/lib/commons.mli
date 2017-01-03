@@ -8,4 +8,5 @@ val close_in : in_channel -> unit
 type out_channel
 val open_out : string -> out_channel
 val output_char : out_channel -> char -> unit
+val output_string : out_channel -> string -> unit
 val close_out : out_channel -> unit
