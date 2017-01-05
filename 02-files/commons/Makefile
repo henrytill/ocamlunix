@@ -1,4 +1,5 @@
-OCB = ocamlbuild
+OCB_FLAGS = -use-ocamlfind
+OCB       = ocamlbuild $(OCB_FLAGS)
 
 all: native byte
 

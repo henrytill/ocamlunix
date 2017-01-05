@@ -1,2 +1,3 @@
-<src/main.{byte,native}>: use_unix, use_commons
-"lib": include
+<src/main.{byte,native}>: use_unix
+<lib>: include
+
