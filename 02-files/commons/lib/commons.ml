@@ -92,4 +92,3 @@ let output_string chan s =
 let close_out chan =
   ignore (write chan.out_fd chan.out_buffer 0 chan.out_pos);
   close chan.out_fd
-;;
