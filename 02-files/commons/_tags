@@ -1,3 +1,5 @@
 <src/main.{byte,native}>: use_unix
+<test/test*>: package(alcotest)
 <lib>: include
+<misc>: include
 

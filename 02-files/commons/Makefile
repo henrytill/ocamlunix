@@ -13,6 +13,10 @@ byte: sanity
 	$(OCB) src/main.byte
 
 sanity:
-	ocamlfind query unix
+	ocamlfind query unix alcotest
 
-.PHONY: all clean byte native sanity
+test:
+	$(OCB) test/test.byte
+	ocamlrun test.byte
+
+.PHONY: all clean byte native sanity test
