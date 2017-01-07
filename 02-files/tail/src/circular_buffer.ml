@@ -13,15 +13,23 @@ let create size dummy =
     data = Array.make size dummy;
     size }
 
+let rec safe_add ceiling current amount =
+  if (current + amount) >= ceiling then
+    let diff = current + amount - ceiling in
+    safe_add ceiling 0 diff
+  else
+    current + amount
+
 let safe_incr ceiling current =
-  if current = ceiling - 1 then 0 else current + 1
+  safe_add ceiling current 1
 
 let push buffer elem =
-  if buffer.element_count < buffer.size then buffer.element_count <- buffer.element_count + 1;
+  if buffer.element_count < buffer.size then
+    buffer.element_count <- buffer.element_count + 1
+  else
+    buffer.read_pos <- safe_add buffer.size buffer.read_pos (buffer.element_count + 1);
   buffer.data.(buffer.write_pos) <- elem;
-  let read_write_pos = safe_incr buffer.size buffer.write_pos in
-  buffer.write_pos <- read_write_pos;
-  buffer.read_pos <- read_write_pos
+  buffer.write_pos <- safe_incr buffer.size buffer.write_pos
 
 let pop buffer =
   if buffer.element_count = 0 then raise Not_found;
