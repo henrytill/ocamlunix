@@ -1,3 +1,4 @@
 <src/tail.{native,byte}>: use_unix
 <test/test*>: package(alcotest)
 <src>: include
+<misc>: include
