@@ -3,21 +3,21 @@ OCB       = ocamlbuild $(OCB_FLAGS)
 
 all: native byte
 
-lib:
-	$(OCB) src/circular_buffer.cma
+modules:
+	$(OCB) src/circular_buffer.cmo
 
 clean:
 	$(OCB) -clean
 
-native: sanity
+native: sanity modules
 	$(OCB) src/tail.native
 
-byte: sanity
+byte: sanity modules
 	$(OCB) src/tail.byte
 
-test:
-	$(OCB) test/test.byte
-	ocamlrun test.byte
+test: all
+	$(OCB) test/all_tests.byte
+	ocamlrun all_tests.byte
 
 sanity:
 	ocamlfind query unix alcotest

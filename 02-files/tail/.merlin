@@ -1,9 +1,7 @@
 S src
-S test
 S misc
+S test
 
-B _build/src
-B _build/test
-B _build/misc
+B _build/*
 
 PKG alcotest
