@@ -3,6 +3,9 @@ OCB       = ocamlbuild $(OCB_FLAGS)
 
 all: native byte
 
+lib:
+	$(OCB) src/circular_buffer.cma
+
 clean:
 	$(OCB) -clean
 
@@ -19,4 +22,4 @@ test:
 sanity:
 	ocamlfind query unix alcotest
 
-.PHONY: all clean byte native sanity test
+.PHONY: all lib clean byte native sanity test
