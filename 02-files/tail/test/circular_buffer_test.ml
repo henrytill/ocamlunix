@@ -1,22 +1,8 @@
-(* Signature for test modules  *)
-
-module type N_element_buffer = sig
-
-  type t
-
-  val buffer : t Circular_buffer.t
-
-  val test_set : (string * [> `Quick ] * (unit -> unit)) list
-
-end
-
 let check_char = Alcotest.(check char)
 
 (* Two-element buffer *)
 
-module Two_element_buffer : N_element_buffer = struct
-
-  type t = char
+module Two_element_buffer : Common.Tests = struct
 
   let buffer = Circular_buffer.create 2 '0' (*     *)
 
@@ -60,9 +46,7 @@ end
 
 (* Five-element buffer *)
 
-module Five_element_buffer : N_element_buffer = struct
-
-  type t = char
+module Five_element_buffer : Common.Tests = struct
 
   let buffer = Circular_buffer.create 5 '0'  (*           *)
 
