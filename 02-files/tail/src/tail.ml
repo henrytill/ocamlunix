@@ -33,44 +33,28 @@ let lines_alt bytes: bytes list =
   loop (Bytes.length bytes - 2) []
 
 let rec drop n xs =
-  if n > List.length xs then
-    []
-  else if n = 0 then
-    xs
-  else
-    drop (n - 1) (List.tl xs)
+  match xs with
+  | [] -> []
+  | _ :: tl -> if n = 0 then xs else drop (n - 1) tl
 
 let main filename n =
   let fd = openfile filename [O_RDONLY] 0 in
   let file_size = lseek fd 0 SEEK_END in
   let max_size = 4096 in
-  let rec loop buff =
-    match buff with
-    | Some b ->
-      let current_size = Bytes.length b in
-      let remaining_size = file_size - current_size in
-      let new_size = if remaining_size < max_size then remaining_size else max_size in
-      let b = Bytes.extend b new_size 0 in
-      ignore (lseek fd (-(new_size + current_size)) SEEK_END);
-      ignore (read fd b 0 new_size);
-      let xs = lines b in
-      let count = List.length xs in
-      if count >= n then
-        drop (count - n) xs
-      else
-        loop (Some b)
-    | None ->
-      let new_size = if file_size < max_size then file_size else max_size in
-      let b = Bytes.create new_size in
-      ignore (lseek fd (-new_size) SEEK_END);
-      ignore (read fd b 0 new_size);
-      let xs = lines b in
-      let count = List.length xs in
-      if count >= n then
-        drop (count - n) xs
-      else
-        loop (Some b)
+  let rec loop pos acc =
+    let chunk_size = if pos <= max_size then pos else max_size in
+    let start_pos = pos - chunk_size in
+    let b = Bytes.create chunk_size in
+    ignore (lseek fd start_pos SEEK_SET);
+    ignore (read fd b 0 chunk_size);
+    let acc_bytes = (Bytes.cat b acc) in
+    let xs = lines_alt acc_bytes in
+    let num_lines = List.length xs in
+    if num_lines >= n then
+      drop (num_lines - n) xs
+    else
+      loop start_pos acc_bytes
   in
   Misc.try_finalize
-    loop None
+    (fun initial_pos -> loop initial_pos Bytes.empty) file_size
     (fun () -> close fd) ()
