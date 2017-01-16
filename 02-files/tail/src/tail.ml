@@ -21,8 +21,8 @@ let lines_alt bytes: bytes list =
   let open Bytes in
   let rec loop end_pos acc =
     try
-      let start_pos = rindex_from bytes (end_pos - 1) '\n' in
-      let offset = (end_pos + 1) - (start_pos + 1) in
+      let start_pos = rindex_from bytes end_pos '\n' in
+      let offset = (end_pos + 2) - (start_pos + 1) in
       loop (start_pos - 1) ((sub bytes (start_pos + 1) offset) :: acc)
     with Not_found ->
       if end_pos > 0 then
@@ -30,7 +30,7 @@ let lines_alt bytes: bytes list =
       else
         acc
   in
-  loop (Bytes.length bytes - 1) []
+  loop (Bytes.length bytes - 2) []
 
 let rec drop n xs =
   if n > List.length xs then
