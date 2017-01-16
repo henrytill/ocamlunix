@@ -7,7 +7,7 @@ let lines bytes: bytes list =
       let end_pos = index_from bytes start_pos '\n' + 1 in
       let offset = end_pos - start_pos in
       loop end_pos (acc @ [(sub bytes start_pos offset)])
-    with exn ->
+    with Not_found ->
       let end_pos = length bytes in
       let offset = end_pos - start_pos in
       if offset > 0 then
