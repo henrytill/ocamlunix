@@ -44,5 +44,5 @@ module Make (M : Lines_impl) : Common.Tests = struct
 
 end
 
-module Lines     = Make (struct let f = Tail.lines end)
+module Lines     = Make (struct let f = Tail.lines     end)
 module Lines_alt = Make (struct let f = Tail.lines_alt end)
