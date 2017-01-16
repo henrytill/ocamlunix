@@ -10,10 +10,10 @@ clean:
 	$(OCB) -clean
 
 native: sanity modules
-	$(OCB) src/tail.native
+	$(OCB) src/main.native
 
 byte: sanity modules
-	$(OCB) src/tail.byte
+	$(OCB) src/main.byte
 
 test: all
 	$(OCB) test/all_tests.byte
