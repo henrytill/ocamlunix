@@ -1,6 +1,6 @@
 open Unix
 
-let lines bytes: bytes list =
+let lines bytes : bytes list =
   let open Bytes in
   let rec loop start_pos acc =
     try
@@ -17,7 +17,7 @@ let lines bytes: bytes list =
   in
   loop 0 []
 
-let lines_alt bytes: bytes list =
+let lines_alt bytes : bytes list =
   let open Bytes in
   let rec loop end_pos acc =
     try
