@@ -1,4 +1,4 @@
-OCB_FLAGS = -use-ocamlfind -I src
+OCB_FLAGS = -use-ocamlfind
 OCB       = ocamlbuild $(OCB_FLAGS)
 
 FILES   = find exercise1 getcwd

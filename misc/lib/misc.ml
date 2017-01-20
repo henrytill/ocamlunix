@@ -21,3 +21,9 @@ let protect ~f ~(finally: unit -> unit) =
     (match !result with Some x -> x | None -> raise e)
   | e ->
     finally (); raise e
+
+let iter_dir f dirname =
+  let open Unix in
+  let d = opendir dirname in
+  try while true do f (readdir d) done
+  with End_of_file -> closedir d

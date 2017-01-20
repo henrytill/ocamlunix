@@ -1,1 +1,3 @@
 <src/*> : use_unix
+<src> : include
+<misc> : include
