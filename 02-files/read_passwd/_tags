@@ -1,0 +1,2 @@
+<src/*.{native,byte}>: use_unix
+<src>: include
