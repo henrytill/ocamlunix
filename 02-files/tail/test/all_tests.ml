@@ -13,8 +13,7 @@ let lines () =
     Alcotest.run
       ~and_exit:false
       "lines"
-      ["Lines.test_set",     Lines_test.Lines.test_set;
-       "Lines_alt.test_set", Lines_test.Lines_alt.test_set;]
+      ["New_lines.test_set", Lines_test.New_lines.test_set;]
   with
     Alcotest.Test_error -> Printf.printf "Continue!!\n%!"
 
