@@ -9,8 +9,8 @@ action ()
 {
     case $1 in
         default)    action bin-native ;;
-        bin-byte)   $OCAMLBUILD tar.byte ;;
-        bin-native) $OCAMLBUILD tar.native ;;
+        bin-byte)   $OCAMLBUILD readtar_v2.byte ;;
+        bin-native) $OCAMLBUILD readtar_v2.native ;;
         clean)      $OCAMLBUILD -clean ;;
         *)          $OCAMLBUILD $* ;;
     esac

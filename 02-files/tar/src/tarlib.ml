@@ -157,7 +157,7 @@ let copy_file file output =
 
 exception Done
 
-let find_and_copy tarfile filename =
+let find_and_copy_v1 tarfile filename =
   let fd = openfile tarfile [O_RDONLY] 0o0 in
   let found_or_collect r accu =
     if r.header.name = filename then
@@ -173,15 +173,120 @@ let find_and_copy tarfile filename =
   with Done ->
     close fd
 
-let readtar () =
+let readtar_v1 () =
   let nargs = Array.length Sys.argv in
   if nargs = 2 then
     list Sys.argv.(1)
   else if nargs = 3 then
-    find_and_copy Sys.argv.(1) Sys.argv.(2)
+    find_and_copy_v1 Sys.argv.(1) Sys.argv.(2)
   else
     prerr_endline ("Usage: " ^ Sys.argv.(0) ^ " <tarfile> [ <source> ]")
 
-;;
+
+(* Exercise 7 *)
 
-handle_unix_error (handle_error readtar) ()
+type info =
+  | File
+  | Link of string list
+  | Dir of (string * inode) list
+
+and inode =
+  { mutable record : record option;
+    mutable info   : info }
+
+let root () =
+  let rec i = { record = None; info = Dir [Filename.current_dir_name, i] } in i
+
+let link inode name nod =
+  match inode.info with
+  | File | Link _ -> error name "Not a directory"
+  | Dir list ->
+      try
+        let _ = List.assoc name list in
+        error name "Already exists"
+      with Not_found ->
+        inode.info <- Dir ((name, nod) :: list)
+
+let mkfile inode name r =
+  let f = { record = r; info = File } in
+  link inode name f; f
+
+let symlink inode name r path =
+  let s = { record = r; info = Link path } in
+  link inode name s; s
+
+let mkdir inode name r =
+  let d = mkfile inode name r in
+  d.info <- Dir [Filename.current_dir_name, d;
+                 Filename.parent_dir_name, inode];
+  d
+
+let rec find link inode path =
+  match inode.info, path with
+  | _, [] -> inode
+  | Dir list, name :: rest ->
+      let subnode = List.assoc name list in
+      let subnode =
+        match subnode.info with
+        | Link q -> if link && rest = [] then subnode else find false inode q
+        | _ -> subnode in
+      find link subnode rest
+  | _, _ -> raise Not_found
+
+let rec mkpath inode path =
+  match inode.info, path with
+  | _, [] -> inode
+  | Dir list, name :: rest ->
+      let subnode =
+        try List.assoc name list
+        with Not_found -> mkdir inode name None in
+      mkpath subnode rest
+  | _, _ -> raise Not_found
+
+let explode f =
+  let rec dec f p =
+    if f = Filename.current_dir_name then
+      p
+    else
+      dec (Filename.dirname f) (Filename.basename f :: p) in
+  dec (if Filename.basename f = "" then Filename.dirname f else f) []
+
+let add archive r =
+  match r.header.kind with
+  | CHR (_, _) | BLK (_, _) | FIFO -> ()
+  | kind ->
+      match List.rev (explode r.header.name) with
+      | [] -> ()
+      | name :: parent_rev ->
+          let inode = mkpath archive (List.rev parent_rev) in
+          match kind with
+          | DIR        -> ignore (mkdir inode name (Some r))
+          | REG | CONT -> ignore (mkfile inode name (Some r))
+          | LNK f      -> ignore (symlink inode name (Some r) (explode f))
+          | LINK f     -> link inode name (find true archive (explode f))
+          | _          -> assert false
+
+let find_and_copy_v2 tarfile filename =
+  let fd = openfile tarfile [O_RDONLY] 0 in
+  let records = List.rev (fold (fun x y -> x :: y) [] fd) in
+  let archive = root () in
+  List.iter (add archive) records;
+  let inode =
+    try find false archive (explode filename)
+    with Not_found -> error filename "File not found" in
+  begin
+    match inode.record with
+    | Some ({ header = { kind = (REG | CONT) }} as r) -> copy_file r stdout
+    | Some _ -> error filename "Not a regular file"
+    | None   -> error filename "Not found"
+  end;
+  close fd
+
+let readtar_v2 () =
+  let nargs = Array.length Sys.argv in
+  if nargs = 2 then
+    list Sys.argv.(1)
+  else if nargs = 3 then
+    find_and_copy_v1 Sys.argv.(1) Sys.argv.(2)
+  else
+    prerr_endline ("Usage: " ^ Sys.argv.(0) ^ " <tarfile> [ <source> ]")
