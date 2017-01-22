@@ -61,7 +61,7 @@ let tail filename n =
   let file_size = lseek fd 0 SEEK_END in
   let max_size = 4096 in
   let rec loop pos acc =
-    let chunk_size = if pos <= max_size then pos else max_size in
+    let chunk_size = min pos max_size in
     let acc_bytes = Bytes.extend acc chunk_size 0 in
     let start_pos = pos - chunk_size in
     ignore (lseek fd start_pos SEEK_SET);
@@ -74,5 +74,5 @@ let tail filename n =
       loop start_pos acc_bytes
   in
   Misc.try_finalize
-    (fun initial_pos -> loop initial_pos Bytes.empty) file_size
-    (fun () -> close fd) ()
+    (loop file_size) Bytes.empty
+    close fd
