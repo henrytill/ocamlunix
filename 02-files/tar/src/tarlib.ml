@@ -290,3 +290,107 @@ let readtar_v2 () =
     find_and_copy_v1 Sys.argv.(1) Sys.argv.(2)
   else
     prerr_endline ("Usage: " ^ Sys.argv.(0) ^ " <tarfile> [ <source> ]")
+
+
+(* Exercise 8 *)
+
+let warning mes =
+  prerr_string mes;
+  prerr_newline ()
+
+let mkpath p perm =
+  let open Filename in
+  let normal_path = if basename p = "" then dirname p else p in
+  let path_to_dir = dirname normal_path in
+  let rec make p =
+    try ignore (stat p)
+    with Unix_error (ENOENT, _, _) ->
+      if p = current_dir_name then
+        ()
+      else if p = parent_dir_name then
+        warning "Ill-formed archive: path contains \"..\""
+      else
+        begin
+          make (dirname p);
+          Unix.mkdir p perm
+        end
+  in
+  make path_to_dir
+
+let set_infos header =
+  chmod header.name header.perm;
+  let mtime = float header.mtime in
+  utimes header.name mtime mtime;
+  begin
+    match header.kind with
+    | LNK f -> ()
+    | _ -> chmod header.name header.perm
+  end;
+  try chown header.name header.uid header.gid
+  with Unix_error(EPERM, _, _) -> ()
+
+let verbose           = ref true
+let default_dir_perm  = 0o777
+let default_file_perm = 0o666
+
+let protect f x g y =
+  try
+    f x;
+    g y
+  with z ->
+    g y;
+    raise z
+
+let file_exists f =
+  try ignore (stat f); true
+  with _ -> false
+
+let untar_file_collect_dirs file dirs =
+  let fh = file.header in
+  if !verbose then
+    begin
+      print_string fh.name;
+      print_newline ()
+    end;
+  match fh.kind with
+  | CHR (_, _) | BLK (_, _) | FIFO ->
+      warning (fh.name ^ "Ignoring special files");
+      dirs
+  | DIR ->
+      mkpath fh.name default_dir_perm;
+      if file_exists fh.name then
+        dirs
+      else
+        begin
+          Unix.mkdir fh.name default_dir_perm;
+          fh :: dirs
+        end
+  | x ->
+      mkpath fh.name default_dir_perm;
+      begin
+        match x with
+        | REG | CONT ->
+            let flags = [O_WRONLY; O_TRUNC; O_CREAT] in
+            let out = openfile fh.name flags default_file_perm in
+            protect (copy_file file) out close out
+        | LNK f ->
+            Unix.symlink f fh.name
+        | LINK f ->
+            begin
+              try
+                if (stat fh.name).st_kind = S_REG then
+                  unlink fh.name
+              with Unix_error(_, _, _) ->
+                ()
+            end;
+            Unix.link f fh.name;
+        | _ -> assert false
+      end;
+      set_infos fh;
+      dirs
+
+let extract tarfile =
+  let fd = openfile tarfile [O_RDONLY] 0 in
+  let new_directories = fold untar_file_collect_dirs [] fd in
+  List.iter set_infos new_directories;
+  close fd

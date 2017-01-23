@@ -8,11 +8,20 @@ OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -use-ocamlfind -classic-display \
 action ()
 {
     case $1 in
-        default)    action bin-native ;;
-        bin-byte)   $OCAMLBUILD readtar_v2.byte ;;
-        bin-native) $OCAMLBUILD readtar_v2.native ;;
-        clean)      $OCAMLBUILD -clean ;;
-        *)          $OCAMLBUILD $* ;;
+        default)
+            action bin-native ;;
+        bin-byte)
+            $OCAMLBUILD readtar_v1.byte
+            $OCAMLBUILD readtar_v2.byte
+            $OCAMLBUILD untar.byte ;;
+        bin-native)
+            $OCAMLBUILD readtar_v1.native
+            $OCAMLBUILD readtar_v2.native
+            $OCAMLBUILD untar.native ;;
+        clean)
+            $OCAMLBUILD -clean ;;
+        *)
+            $OCAMLBUILD $* ;;
     esac
 }
 
