@@ -13,11 +13,13 @@ action ()
         bin-byte)
             $OCAMLBUILD readtar_v1.byte
             $OCAMLBUILD readtar_v2.byte
-            $OCAMLBUILD untar.byte ;;
+            $OCAMLBUILD untar.byte
+            $OCAMLBUILD tar.byte ;;
         bin-native)
             $OCAMLBUILD readtar_v1.native
             $OCAMLBUILD readtar_v2.native
-            $OCAMLBUILD untar.native ;;
+            $OCAMLBUILD untar.native
+            $OCAMLBUILD tar.native ;;
         clean)
             $OCAMLBUILD -clean ;;
         *)

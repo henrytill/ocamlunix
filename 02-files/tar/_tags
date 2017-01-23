@@ -1,2 +1,4 @@
+true : bin_annot
 <src/*.{byte,native}> : use_unix
 <src> : include
+<misc> : include
