@@ -1,5 +1,5 @@
 S lib
+S misc
 S src
 
-B _build/lib
-B _build/src
+B _build/**
