@@ -1,1 +1,2 @@
-<echo.{native,byte}> : use_unix
+true : use_unix
+<src> : include
