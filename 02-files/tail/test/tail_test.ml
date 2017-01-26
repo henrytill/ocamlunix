@@ -20,7 +20,7 @@ module Tail : Common.Tests = struct
       (Tail.tail filename file_length)
 
   let test_set = [
-    "file_bytes_test Makefile",        `Quick, (file_bytes_test "Makefile");
+    "file_bytes_test build",           `Quick, (file_bytes_test "build");
     "file_bytes_test /var/log/syslog", `Quick, (file_bytes_test "/var/log/syslog");
   ]
 

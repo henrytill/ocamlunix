@@ -1,6 +1,5 @@
-<src/main.{native,byte}>: use_unix
-<src/tail.{native,byte}>: use_unix
-<test/*>: package(alcotest)
-<misc>: include
-<src>: include
-<test>: include
+<src/*>  : use_unix
+<test/*> : package(alcotest)
+<misc>   : include
+<src>    : include
+<test>   : include

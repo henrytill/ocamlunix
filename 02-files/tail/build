@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -e
+
+OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -use-ocamlfind -classic-display \
+                                     -tag debug"}
+
+action ()
+{
+    case $1 in
+        default)    action bin-native ;;
+        bin-byte)   $OCAMLBUILD main.byte ;;
+        bin-native) $OCAMLBUILD main.native ;;
+        test)       $OCAMLBUILD all_tests.byte && ./all_tests.byte ;;
+        clean)      $OCAMLBUILD -clean ;;
+        *)          $OCAMLBUILD $* ;;
+    esac
+}
+
+if [ $# -eq 0 ];
+then action default ;
+else action $*; fi
