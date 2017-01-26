@@ -1,2 +1,2 @@
-<src/*> : use_unix
+true  : bin_annot, package(unix)
 <src> : include

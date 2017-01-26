@@ -1,4 +1,4 @@
-<src/*.{native,byte}> : use_unix
-<src> : include
+true        : bin_annot, package(unix)
+<misc>      : include
+<src>       : include
 <file_copy> : include
-<misc> : include

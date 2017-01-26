@@ -1,5 +1,5 @@
-<src/*>  : use_unix
+true     : bin_annot, package(unix)
+<test/*> : package(alcotest)
 <lib>    : include
 <misc>   : include
-<test/*> : package(alcotest)
 
