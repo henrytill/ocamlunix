@@ -13,7 +13,7 @@ action ()
         bin-native)  $OCAMLBUILD src/main.native ;;
         test-byte)   $OCAMLBUILD test/test.byte ;;
         test-native) $OCAMLBUILD test/test.native ;;
-        test)        action test-byte && ./test.byte ;;
+        tests)       action test-byte && ./test.byte ;;
         clean)       $OCAMLBUILD -clean ;;
         *)           $OCAMLBUILD $* ;;
     esac

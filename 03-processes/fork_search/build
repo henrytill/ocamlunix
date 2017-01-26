@@ -11,7 +11,7 @@ action ()
         default)    action bin-native ;;
         bin-byte)   $OCAMLBUILD fork_search.byte ;;
         bin-native) $OCAMLBUILD fork_search.native ;;
-        test)       action default ;;
+        tests)      action default ;;
         clean)      $OCAMLBUILD -clean ;;
         *)          $OCAMLBUILD $* ;;
     esac

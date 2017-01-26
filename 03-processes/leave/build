@@ -11,7 +11,7 @@ action ()
         default)    action bin-native ;;
         bin-byte)   $OCAMLBUILD leave.byte ;;
         bin-native) $OCAMLBUILD leave.native ;;
-        test)       action default ;;
+        tests)      action default ;;
         clean)      $OCAMLBUILD -clean ;;
         *)          $OCAMLBUILD $* ;;
     esac

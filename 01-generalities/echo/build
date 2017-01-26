@@ -11,7 +11,7 @@ action ()
         default)    action bin-native ;;
         bin-byte)   $OCAMLBUILD echo.byte ;;
         bin-native) $OCAMLBUILD echo.native ;;
-        test)       action bin-native && ./echo.native '[1, 2, "three", {"four": 4}]' ;;
+        tests)      action bin-native && ./echo.native '[1, 2, "three", {"four": 4}]' ;;
         clean)      $OCAMLBUILD -clean ;;
         *)          $OCAMLBUILD $* ;;
     esac

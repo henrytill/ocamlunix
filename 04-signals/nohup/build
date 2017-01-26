@@ -11,7 +11,7 @@ action ()
         default)    action bin-native ;;
         bin-byte)   $OCAMLBUILD nohup.byte ;;
         bin-native) $OCAMLBUILD nohup.native ;;
-        test)       action default ;;
+        tests)      action default ;;
         clean)      $OCAMLBUILD -clean ;;
         *)          $OCAMLBUILD $* ;;
     esac

@@ -21,7 +21,7 @@ action ()
             $OCAMLBUILD exercise1.native
             $OCAMLBUILD getcwd.native
             ;;
-        test)
+        tests)
             action default
             [ "$(./getcwd.native)" = "$(pwd)" ] && echo TEST PASSED!
             ;;

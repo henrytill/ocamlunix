@@ -11,7 +11,7 @@ action ()
         default)    action lib ;;
         lib)        $OCAMLBUILD misc.cma ;;
         doc)        $OCAMLBUILD doc/lib.docdir/index.html ;;
-        test)       action default ;;
+        tests)      action default ;;
         clean)      $OCAMLBUILD -clean ;;
         sanity)     ocamlfind query unix ;;
         *)          $OCAMLBUILD $* ;;

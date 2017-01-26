@@ -23,7 +23,7 @@ action ()
             $OCAMLBUILD untar.native
             $OCAMLBUILD tar.native
             ;;
-        test)
+        tests)
             action default
             ;;
         clean)
