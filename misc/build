@@ -11,11 +11,14 @@ action ()
         default)    action lib ;;
         lib)        $OCAMLBUILD misc.cma ;;
         doc)        $OCAMLBUILD doc/lib.docdir/index.html ;;
+        test)       action default ;;
         clean)      $OCAMLBUILD -clean ;;
         sanity)     ocamlfind query unix ;;
         *)          $OCAMLBUILD $* ;;
     esac
 }
+
+cd $(dirname $0)
 
 if [ $# -eq 0 ];
 then action default ;

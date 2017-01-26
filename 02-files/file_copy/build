@@ -54,6 +54,8 @@ test ()
     rm -r $TESTDIR
 }
 
+cd $(dirname $0)
+
 if [ $# -eq 0 ];
 then action default ;
 else action $*; fi

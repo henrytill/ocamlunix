@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -e
+
+cd $(dirname $0)
+
+BUILD_SCRIPTS=$(find -mindepth 2 -type f -name build -exec test -x {} \; -print | sort)
+
+every ()
+{
+    for script in $BUILD_SCRIPTS; do
+        echo $script $*
+        $script $*
+    done
+}
+
+action ()
+{
+    case $1 in
+        default) every ;;
+        test)    every test ;;
+        clean)   every clean ;;
+        *)       every $* ;;
+    esac
+}
+
+if [ $# -eq 0 ];
+then action default ;
+else action $*; fi

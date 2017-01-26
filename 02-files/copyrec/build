@@ -11,10 +11,13 @@ action ()
         default)    action bin-native ;;
         bin-byte)   $OCAMLBUILD copyrec.byte ;;
         bin-native) $OCAMLBUILD copyrec.native ;;
+        test)       action default ;;
         clean)      $OCAMLBUILD -clean ;;
         *)          $OCAMLBUILD $* ;;
     esac
 }
+
+cd $(dirname $0)
 
 if [ $# -eq 0 ];
 then action default ;
