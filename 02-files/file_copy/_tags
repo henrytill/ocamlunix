@@ -1,1 +1,1 @@
-<src/file_copy.{native,byte}> : use_unix
+<src/*> : use_unix

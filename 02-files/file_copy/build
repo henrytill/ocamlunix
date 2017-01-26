@@ -1,0 +1,59 @@
+#!/bin/sh
+
+set -e
+
+OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -use-ocamlfind -classic-display \
+                                     -tag debug"}
+
+action ()
+{
+    case $1 in
+        default)    action bin-native ;;
+        bin-byte)   $OCAMLBUILD src/file_copy.byte ;;
+        bin-native) $OCAMLBUILD src/file_copy.native ;;
+        test)       action bin-native && test ;;
+        clean)      $OCAMLBUILD -clean ;;
+        *)          $OCAMLBUILD $* ;;
+    esac
+}
+
+test ()
+{
+    local TESTDIR=$(mktemp -d /tmp/file_copy.XXXXXXXXXX)
+
+    echo
+    echo "========================================="
+    echo "Test Directory: $TESTDIR"
+    echo "========================================="
+
+    mkdir -p $TESTDIR
+    dd if=/dev/urandom of=$TESTDIR/source bs=1048576 count=4
+
+    echo
+    echo "======="
+    echo "Test 1:"
+    echo "======="
+
+    ./file_copy.native $TESTDIR/source $TESTDIR/copy
+    cmp -s $TESTDIR/source $TESTDIR/copy
+    echo "PASSED!"
+
+    echo
+    echo "======="
+    echo "Test 2:"
+    echo "======="
+
+    ./file_copy.native -a $TESTDIR/source $TESTDIR/copy
+    cat $TESTDIR/source $TESTDIR/source | cmp -s $TESTDIR/copy
+    echo "PASSED!"
+
+    echo
+    echo "All tests passed!"
+    echo
+    echo "Cleaning up..."
+    rm -r $TESTDIR
+}
+
+if [ $# -eq 0 ];
+then action default ;
+else action $*; fi
