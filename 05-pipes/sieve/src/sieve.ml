@@ -12,7 +12,7 @@ let generate k output =
 
 let print_prime n =
   print_int n;
-  print_newline ()
+  print_char '\n'
 
 let read_first_primes input count =
   let rec read_primes first_primes count =
@@ -28,7 +28,9 @@ let read_first_primes input count =
           read_primes (n :: first_primes) (count - 1)
         end
   in
-  read_primes [] count
+  Misc.try_finalize
+    (read_primes []) count
+    flush Pervasives.stdout
 
 let rec filter input =
   try
@@ -41,13 +43,17 @@ let rec filter input =
     | p ->
         close fd_in;
         let output = out_channel_of_descr fd_out in
-        while true do
-          let n = input_int input in
-          if List.exists (fun m -> n mod m = 0) first_primes then
-            ()
-          else
-            output_int output n
-        done
+        try
+          while true do
+            let n = input_int input in
+            if List.exists (fun m -> n mod m = 0) first_primes then
+              ()
+            else
+              output_int output n
+          done
+        with End_of_file ->
+          close_out output;
+          ignore (waitpid [] p)
   with End_of_file -> ()
 
 let sieve () =
@@ -59,7 +65,10 @@ let sieve () =
       filter (in_channel_of_descr fd_in)
   | p ->
       close fd_in;
-      generate len (out_channel_of_descr fd_out)
+      let output = out_channel_of_descr fd_out in
+      generate len output;
+      close_out output;
+      ignore (waitpid [] p)
 
 let () =
   handle_unix_error sieve ()
