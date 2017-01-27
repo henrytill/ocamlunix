@@ -5,13 +5,23 @@ set -e
 OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -use-ocamlfind -classic-display \
                                      -tag debug"}
 
+run_tests()
+{
+    $OCAMLBUILD all_tests.byte
+
+    case $(uname -s) in
+        Linux)  ./all_tests.byte ;;
+        *)      ./all_tests.byte test New_lines.test_set ;;
+    esac
+}
+
 action ()
 {
     case $1 in
         default)    action bin-native ;;
         bin-byte)   $OCAMLBUILD main.byte ;;
         bin-native) $OCAMLBUILD main.native ;;
-        tests)      $OCAMLBUILD all_tests.byte && ./all_tests.byte ;;
+        tests)      run_tests ;;
         clean)      $OCAMLBUILD -clean ;;
         *)          $OCAMLBUILD $* ;;
     esac
