@@ -8,7 +8,7 @@ OPAM_INSTALL="opam install -y"
 
 DEPENDENCIES="alcotest"
 
-BUILD_SCRIPTS=$(find -mindepth 2 -type f -name build -exec test -x {} \; -print | sort)
+BUILD_SCRIPTS=$(find . -mindepth 2 -type f -name build -exec test -x {} \; -print | sort)
 
 check_bin ()
 {
