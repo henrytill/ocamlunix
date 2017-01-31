@@ -35,14 +35,14 @@ let read_first_primes input count =
 let rec filter input =
   try
     let first_primes = read_first_primes input 1000 in
-    let (fd_in, fd_out) = pipe () in
+    let (pipe_out, pipe_in) = pipe () in
     match fork () with
     | 0 ->
-        close fd_out;
-        filter (in_channel_of_descr fd_in)
+        close pipe_in;
+        filter (in_channel_of_descr pipe_out)
     | p ->
-        close fd_in;
-        let output = out_channel_of_descr fd_out in
+        close pipe_out;
+        let output = out_channel_of_descr pipe_in in
         try
           while true do
             let n = input_int input in
@@ -58,14 +58,14 @@ let rec filter input =
 
 let sieve () =
   let len = try int_of_string Sys.argv.(1) with _ -> max_int in
-  let (fd_in, fd_out) = pipe () in
+  let (pipe_out, pipe_in) = pipe () in
   match fork () with
   | 0 ->
-      close fd_out;
-      filter (in_channel_of_descr fd_in)
+      close pipe_in;
+      filter (in_channel_of_descr pipe_out)
   | p ->
-      close fd_in;
-      let output = out_channel_of_descr fd_out in
+      close pipe_out;
+      let output = out_channel_of_descr pipe_in in
       generate len output;
       close_out output;
       ignore (waitpid [] p)

@@ -4,17 +4,17 @@ open Unix
 let compose () =
   let n = Array.length Sys.argv - 1 in
   for i = 1 to n - 1 do
-    let (fd_in, fd_out) = pipe () in
+    let (pipe_out, pipe_in) = pipe () in
     match fork () with
     | 0 ->
-        dup2 fd_out stdout;
-        close fd_out;
-        close fd_in;
+        dup2 pipe_in stdout;
+        close pipe_in;
+        close pipe_out;
         execv "/bin/sh" [| "/bin/sh"; "-c"; Sys.argv.(i) |]
     | _ ->
-        dup2 fd_in stdin;
-        close fd_out;
-        close fd_in
+        dup2 pipe_out stdin;
+        close pipe_in;
+        close pipe_out
   done;
   match fork () with
   | 0 ->
