@@ -1,0 +1,76 @@
+#!/bin/sh
+
+set -e
+
+OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -use-ocamlfind -classic-display \
+                                     -tag debug"}
+
+run_test ()
+{
+    echo "=== Building and running test ==="
+    ocamlbuild -cflags '-I misc -I lib' \
+               -lflags 'unix.cma misc/misc.cma lib/single_write.cma' \
+               src/demo.byte
+    if test "Hello, world!" = "$(./demo.byte)"
+    then
+        echo "Test passed!"
+    else
+        echo "Test failed!"
+        exit 2
+    fi
+}
+
+run_test_sandboxed ()
+{
+    TEST_DIR=$(mktemp -d)
+    echo "=== Building and running test in sandbox ==="
+    echo "Sandbox located in $TEST_DIR"
+    mkdir -p $TEST_DIR/lib
+    cp _build/lib/exlib.o $TEST_DIR/lib
+    cp _build/misc/misc.cma \
+       _build/misc/misc.cmi \
+       _build/lib/single_write.cma \
+       _build/lib/single_write.cmi \
+       src/demo.ml \
+       $TEST_DIR
+    cd $TEST_DIR
+    ocamlc -o demo.byte unix.cma misc.cma single_write.cma demo.ml
+    if test "Hello, world!" = "$(./demo.byte)"
+    then
+        echo "Test passed!"
+        rm -rf $TEST_DIR
+    else
+        echo "Test failed!"
+        exit 2
+    fi
+}
+
+action ()
+{
+    case $1 in
+        default)
+            action tests
+            ;;
+        lib)
+            $OCAMLBUILD misc/misc.cma
+            $OCAMLBUILD lib/single_write.cma
+            ;;
+        tests)
+            action lib
+            run_test
+            run_test_sandboxed
+            ;;
+        clean)
+            $OCAMLBUILD -clean
+            ;;
+        *)
+            $OCAMLBUILD $*
+            ;;
+    esac
+}
+
+cd $(dirname $0)
+
+if [ $# -eq 0 ];
+then action default ;
+else action $*; fi
