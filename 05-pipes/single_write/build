@@ -49,7 +49,7 @@ action ()
 {
     case $1 in
         default)
-            action tests
+            action lib
             ;;
         lib)
             $OCAMLBUILD misc/misc.cma
