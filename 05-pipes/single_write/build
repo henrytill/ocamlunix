@@ -2,14 +2,19 @@
 
 set -e
 
-OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -use-ocamlfind -classic-display \
+OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -use-ocamlfind \
+                                     -classic-display \
+                                     -tag thread \
+                                     -pkgs threads \
                                      -tag debug"}
 
 run_test ()
 {
     echo "=== Building and running test ==="
     ocamlbuild -cflags '-I misc -I lib' \
-               -lflags 'unix.cma misc/misc.cma lib/single_write.cma' \
+               -lflags 'unix.cma threads.cma misc/misc.cma lib/single_write.cma' \
+               -tag thread \
+               -classic-display \
                src/demo.byte
     if test "Hello, world!" = "$(./demo.byte)"
     then
@@ -34,7 +39,10 @@ run_test_sandboxed ()
        src/demo.ml \
        $TEST_DIR
     cd $TEST_DIR
-    ocamlc -o demo.byte unix.cma misc.cma single_write.cma demo.ml
+    ocamlc -thread \
+           unix.cma threads.cma \
+           misc.cma single_write.cma \
+           -o demo.byte demo.ml
     if test "Hello, world!" = "$(./demo.byte)"
     then
         echo "Test passed!"

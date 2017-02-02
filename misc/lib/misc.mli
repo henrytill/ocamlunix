@@ -62,3 +62,5 @@ val fork_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> Unix.fil
 
 val double_fork_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> Unix.file_descr * 'a -> unit
 (** Double forks a service so that children can recovered *)
+
+val co_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> Unix.file_descr * 'a -> unit
