@@ -1,0 +1,4 @@
+true : bin_annot, package(unix), package(str)
+<lib> : include
+<misc> : include
+<src> : include
