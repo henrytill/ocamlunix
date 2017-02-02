@@ -8,11 +8,7 @@ OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -use-ocamlfind -classic-display \
 run_tests()
 {
     $OCAMLBUILD all_tests.byte
-
-    case $(uname -s) in
-        Linux)  ./all_tests.byte ;;
-        *)      ./all_tests.byte test New_lines.test_set ;;
-    esac
+    ./all_tests.byte
 }
 
 action ()
