@@ -64,3 +64,13 @@ val double_fork_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> U
 (** Double forks a service so that children can recovered *)
 
 val co_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> Unix.file_descr * 'a -> unit
+
+val run_with_lock : Mutex.t -> ('a -> 'b) -> 'a -> 'b
+(** Hold a lock temporarily during a function call. *)
+
+val tcp_farm_server : int -> (Unix.file_descr -> Unix.file_descr * Unix.sockaddr -> 'a) -> Unix.sockaddr -> unit
+(** The [tcp_farm_server] function behaves like tcp_server but takes an
+    additional argument which is the number of threads to start, each of which
+    will become a server at the same address. The advantage of a pool of threads
+    is to reduce the time to handle each connection by eliminating the cost of
+    creating a thread for it, since they are created once and for all. *)

@@ -71,3 +71,20 @@ let double_fork_treatment server service (client_descr, _ as client) =
 let co_treatment server_sock service (client_descr, _ as client) =
   try ignore (Thread.create service client)
   with exn -> close client_descr; raise exn
+
+let run_with_lock l f x =
+  Mutex.lock l;
+  try_finalize f x Mutex.unlock l
+
+let tcp_farm_server n treat_connection addr =
+  let server_sock = install_tcp_server_socket addr in
+  let mutex = Mutex.create () in
+  let rec serve () =
+    let client = run_with_lock mutex (restart_on_EINTR accept) server_sock in
+    treat_connection server_sock client;
+    serve ()
+  in
+  for i = 1 to n-1 do
+    ignore (Thread.create serve ())
+  done;
+  serve ()
