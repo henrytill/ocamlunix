@@ -1,22 +1,18 @@
-#!/bin/sh
+#! /usr/bin/env bash
 
-set -e
+set -euo pipefail
 
 OCAMLBUILD=${OCAMLBUILD:="ocamlbuild -use-ocamlfind \
                                      -classic-display \
                                      -tag thread \
-                                     -pkgs threads \
+                                     -pkgs threads,unix \
                                      -tag debug"}
 
 run_test ()
 {
     echo "=== Building and running test ==="
-    ocamlbuild -cflags '-I misc -I lib' \
-               -lflags 'unix.cma threads.cma misc/misc.cma lib/single_write.cma' \
-               -tag thread \
-               -classic-display \
-               src/demo.byte
-    if test "Hello, world!" = "$(./demo.byte)"
+    $OCAMLBUILD -I misc -I lib src/demo.native
+    if test "Hello, world!" = "$(./demo.native)"
     then
         echo "Test passed!"
     else
@@ -30,19 +26,27 @@ run_test_sandboxed ()
     TEST_DIR=$(mktemp -d)
     echo "=== Building and running test in sandbox ==="
     echo "Sandbox located in $TEST_DIR"
-    mkdir -p $TEST_DIR/lib
-    cp _build/lib/exlib.o $TEST_DIR/lib
-    cp _build/misc/misc.cma \
-       _build/misc/misc.cmi \
-       _build/lib/single_write.cma \
-       _build/lib/single_write.cmi \
+    cp misc/misc.ml \
+       misc/misc.mli \
+       lib/ex.h \
+       lib/ex.c \
+       lib/single_write.ml \
+       lib/single_write.mli \
        src/demo.ml \
        $TEST_DIR
     cd $TEST_DIR
-    ocamlc -thread \
+    ocamlc -c ex.c
+    ocamlc -c -thread unix.cma threads.cma misc.mli
+    ocamlc -c -thread unix.cma threads.cma misc.ml
+    ocamlc -a -o misc.cma misc.cmo
+    ocamlc -c single_write.mli
+    ocamlc -c single_write.ml
+    ocamlc -a -o single_write.cma -custom ex.o single_write.cmo
+    ocamlc -o demo.byte \
+           -thread \
            unix.cma threads.cma \
-           misc.cma single_write.cma \
-           -o demo.byte demo.ml
+           misc.cmo single_write.cma \
+           demo.ml
     if test "Hello, world!" = "$(./demo.byte)"
     then
         echo "Test passed!"
@@ -60,7 +64,6 @@ action ()
             action lib
             ;;
         lib)
-            $OCAMLBUILD misc/misc.cma
             $OCAMLBUILD lib/single_write.cma
             ;;
         tests)
