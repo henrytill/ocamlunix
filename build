@@ -1,12 +1,17 @@
-#!/bin/sh
+#! /usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-cd $(dirname $0)
+BINARY_DEPENDENCIES=(
+    "ocamlfind"
+    "ocamlbuild"
+)
 
-OPAM_INSTALL="opam install -y"
+LIBRARY_DEPENDENCIES=(
+    "alcotest"
+)
 
-DEPENDENCIES="alcotest"
+OPAM_INSTALL=${OPAM_INSTALL:="opam install -y"}
 
 BUILD_SCRIPTS=$(find . -mindepth 2 -type f -name build -exec test -x {} \; -print | sort)
 
@@ -15,16 +20,22 @@ check_bin ()
     command -v $1 || $OPAM_INSTALL $1
 }
 
-check_libs ()
+check_lib ()
 {
-    ocamlfind query $* || $OPAM_INSTALL $*
+    ocamlfind query $1 || $OPAM_INSTALL $1
 }
 
 check_deps ()
 {
-    check_bin ocamlfind
-    check_bin ocamlbuild
-    check_libs $DEPENDENCIES
+    for bindep in ${BINARY_DEPENDENCIES[@]}
+    do
+        check_bin $bindep
+    done
+
+    for libdep in ${LIBRARY_DEPENDENCIES[@]}
+    do
+        check_lib $libdep
+    done
 }
 
 every ()
@@ -45,6 +56,8 @@ action ()
         *)       every $* ;;
     esac
 }
+
+cd $(dirname $0)
 
 if [ $# -eq 0 ];
 then action default ;
