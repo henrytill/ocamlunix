@@ -54,7 +54,7 @@ let parse_command_line s =
 let minishell () =
   try
     while true do
-      let cmd = input_line Pervasives.stdin in
+      let cmd = input_line Stdlib.stdin in
       let words, ampersand = parse_command_line cmd in
       match fork () with
       | 0 ->

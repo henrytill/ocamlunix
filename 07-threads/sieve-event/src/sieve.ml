@@ -66,7 +66,7 @@ let read_first_primes input count =
   in
   Misc.try_finalize
     (read_primes []) count
-    flush Pervasives.stdout
+    flush Stdlib.stdout
 
 let rec filter input =
   try

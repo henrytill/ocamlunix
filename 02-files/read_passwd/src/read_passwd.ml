@@ -15,13 +15,13 @@ let read_passwd message =
     with _ ->
       None
   with
-  | None -> input_line Pervasives.stdin
+  | None -> input_line Stdlib.stdin
   | Some (default, silent) ->
     print_string message;
-    flush Pervasives.stdout;
+    flush Stdlib.stdout;
     tcsetattr stdin TCSANOW silent;
     try
-      let s = input_line Pervasives.stdin in
+      let s = input_line Stdlib.stdin in
       tcsetattr stdin TCSANOW default; s
     with exn ->
       tcsetattr stdin TCSANOW default; raise exn
