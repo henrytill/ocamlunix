@@ -50,7 +50,7 @@ let parse_url url =
 
 let send_get url sock =
   let s = Printf.sprintf "GET %s\r\n" url in
-  ignore (write sock s 0 (String.length s))
+  ignore (write sock (Bytes.of_string s) 0 (String.length s))
 
 let get_url proxy url fdout =
   let (hostname, port), path =

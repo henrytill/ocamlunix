@@ -4,7 +4,7 @@
 
 val try_finalize : ('a -> 'b) -> 'a -> ('c -> 'd) -> 'c -> 'b
 
-val iter_dir : (bytes -> 'a) -> bytes -> unit
+val iter_dir : (string -> 'a) -> string -> unit
 
 val restart_on_EINTR : ('a -> 'b) -> 'a -> 'b
 (** Repeat a system call when it is interrupted by a signal, i.e. when the

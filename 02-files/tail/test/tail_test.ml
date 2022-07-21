@@ -14,7 +14,7 @@ module Tail : Common.Tests = struct
     let file_bytes = load_file filename in
     let expected = Tail.lines file_bytes in
     let file_length = Array.length expected in
-    Alcotest.(check (array string))
+    Alcotest.(check (array bytes))
       "same element"
       expected
       (Tail.tail filename file_length)

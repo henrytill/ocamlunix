@@ -46,7 +46,7 @@ let write_header_to_buffer source infos kind =
      | _      -> failwith "Special files not implemented")
     156;
   let rec sum s i =
-    if i < 0 then s else sum (s + Char.code buffer.[i]) (pred i) in
+    if i < 0 then s else sum (s + Char.code (Bytes.get buffer i)) (pred i) in
   let checksum = sum (Char.code ' ' * 8) (block_size - 1) in
   put 8 (Printf.sprintf "%06o\000 " checksum) 148
 
@@ -78,7 +78,7 @@ let write_file len source fdout =
   copy_loop len
 
 let padding fd len =
-  if len > 0 then ignore (write fd (String.make len '\000') 0 len)
+  if len > 0 then ignore (write fd (Bytes.make len '\000') 0 len)
 
 let try_new_dir archive dir =
   try

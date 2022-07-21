@@ -27,8 +27,8 @@ let multiplex channel inputs outputs =
       if List.mem channel ready_fds then
         begin
           really_read channel buffer 0 2;
-          let i = int_of_char(buffer.[0])
-          and n = int_of_char(buffer.[1]) in
+          let i = int_of_char(Bytes.get buffer 0)
+          and n = int_of_char(Bytes.get buffer 1) in
           if n = 0 then
             close outputs.(i)
           else

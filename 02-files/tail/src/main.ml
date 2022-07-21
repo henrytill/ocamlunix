@@ -7,7 +7,7 @@ let main () =
   ] in
   Arg.parse opt_list (fun f -> file := f) usage_string;
   let xs = Tail.tail !file !num in
-  Array.iter (fun line -> print_string line) xs
+  Array.iter (fun line -> print_bytes line) xs
 ;;
 
 Unix.handle_unix_error main ()

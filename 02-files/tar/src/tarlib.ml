@@ -102,13 +102,13 @@ let buffer = Bytes.create buffer_size
 
 let read_header fd =
   let len = read fd buffer 0 buffer_size in
-  if len = 0 || buffer.[0] = '\000' then
+  if len = 0 || Bytes.get buffer 0 = '\000' then
     None
   else
     begin
       if len < buffer_size then
         without_end_of_file (really_read fd buffer len) (buffer_size - len);
-      Some (header_of_string buffer)
+      Some (header_of_string (String.of_bytes buffer))
     end
 
 let fold f initial fd =

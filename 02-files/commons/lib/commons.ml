@@ -3,7 +3,7 @@ open Unix
 exception End_of_file
 
 type in_channel =
-  { in_buffer: string;
+  { in_buffer: bytes;
     in_fd: file_descr;
     mutable in_pos: int;
     mutable in_end: int }
@@ -19,7 +19,7 @@ let open_in filename =
 let input_char chan =
   if chan.in_pos < chan.in_end then
     begin
-      let c = chan.in_buffer.[chan.in_pos] in
+      let c = Bytes.get chan.in_buffer chan.in_pos in
       chan.in_pos <- chan.in_pos + 1;
       c
     end
@@ -30,14 +30,14 @@ let input_char chan =
       | r ->
         chan.in_end <- r;
         chan.in_pos <- 1;
-        chan.in_buffer.[0];
+        Bytes.get chan.in_buffer 0;
     end
 
 let close_in chan =
   close chan.in_fd
 
 type out_channel =
-  { out_buffer: string;
+  { out_buffer: bytes;
     out_fd: file_descr;
     mutable out_pos: int }
 
@@ -60,31 +60,31 @@ let output_char chan c =
     end
 
 let output_string chan s =
-  let avail = String.length chan.out_buffer - chan.out_pos in
+  let avail = Bytes.length chan.out_buffer - chan.out_pos in
   let len = String.length s in
   if len <= avail then
     begin
-      Bytes.blit s 0 chan.out_buffer chan.out_pos len;
+      Bytes.blit_string s 0 chan.out_buffer chan.out_pos len;
       chan.out_pos <- chan.out_pos + len
     end
   else if chan.out_pos = 0 then
     begin
-      ignore (write chan.out_fd s 0 len)
+      ignore (write chan.out_fd (Bytes.of_string s) 0 len)
     end
   else
     begin
-      Bytes.blit s 0 chan.out_buffer chan.out_pos avail;
-      let out_buffer_size = String.length chan.out_buffer in
+      Bytes.blit_string s 0 chan.out_buffer chan.out_pos avail;
+      let out_buffer_size = Bytes.length chan.out_buffer in
       ignore (write chan.out_fd chan.out_buffer 0 out_buffer_size);
       let remaining = len - avail in
       if remaining < out_buffer_size then
         begin
-          Bytes.blit s avail chan.out_buffer 0 remaining;
+          Bytes.blit_string s avail chan.out_buffer 0 remaining;
           chan.out_pos <- remaining
         end
       else
         begin
-          ignore (write chan.out_fd s avail remaining);
+          ignore (write chan.out_fd (Bytes.of_string s) avail remaining);
           chan.out_pos <- 0
         end
     end
