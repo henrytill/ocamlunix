@@ -1,0 +1,20 @@
+image: debian/stable
+packages:
+  - build-essential
+  - opam
+  - m4
+  - darcs
+  - rsync
+sources:
+  - https://git.sr.ht/~henrytill/ocamlunix
+tasks:
+  - setup: |
+      opam init -yaq
+  - build: |
+      eval $(opam env)
+      cd ocamlunix
+      ./build
+  - test: |
+      eval $(opam env)
+      cd ocamlunix
+      ./build tests
