@@ -1,7 +1,6 @@
 open Unix
 
 let buffer_size = 8192
-
 let buffer = Bytes.create buffer_size
 
 let file_copy append input_name output_name =
@@ -20,3 +19,4 @@ let file_copy append input_name output_name =
   copy_loop ();
   close fd_in;
   close fd_out
+;;

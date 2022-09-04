@@ -8,6 +8,7 @@ let simple_search cond v =
     false
   with
   | Found -> true
+;;
 
 let psearch k cond v =
   let n = Array.length v in
@@ -22,6 +23,10 @@ let psearch k cond v =
   let proc_list = Array.map (Thread.create search) slices in
   Array.iter Thread.join proc_list;
   !found
+;;
 
 let () =
-  psearch 20 (fun x -> x = 4_999) (Array.init 5_000 (fun x -> x)) |> string_of_bool |> print_endline
+  psearch 20 (fun x -> x = 4_999) (Array.init 5_000 (fun x -> x))
+  |> string_of_bool
+  |> print_endline
+;;

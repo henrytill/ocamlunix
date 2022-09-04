@@ -9,6 +9,7 @@ let try_finalize f x finally y =
   in
   finally y;
   res
+;;
 
 let iter_dir f dirname =
   let d = opendir dirname in
@@ -18,10 +19,12 @@ let iter_dir f dirname =
     done
   with
   | End_of_file -> closedir d
+;;
 
 let rec restart_on_EINTR f x =
   try f x with
   | Unix_error (EINTR, _, _) -> restart_on_EINTR f x
+;;
 
 let free_children _ =
   try
@@ -30,6 +33,7 @@ let free_children _ =
     done
   with
   | Unix_error (ECHILD, _, _) -> ()
+;;
 
 let retransmit fdin fdout =
   let buffer_size = 4096 in
@@ -42,6 +46,7 @@ let retransmit fdin fdout =
       copy ()
   in
   copy ()
+;;
 
 let install_tcp_server_socket addr =
   let s = socket PF_INET SOCK_STREAM 0 in
@@ -53,6 +58,7 @@ let install_tcp_server_socket addr =
   | z ->
     close s;
     raise z
+;;
 
 let tcp_server treat_connection addr =
   let open Sys in
@@ -62,6 +68,7 @@ let tcp_server treat_connection addr =
     let client = restart_on_EINTR accept server_sock in
     treat_connection server_sock client
   done
+;;
 
 let sequential_treatment _ service client = service client
 
@@ -75,6 +82,7 @@ let fork_treatment server service ((client_sock, _) as client) =
     | _ -> ()
   in
   try_finalize treat () close client_sock
+;;
 
 let double_fork_treatment server service ((client_descr, _) as client) =
   let treat () =
@@ -87,16 +95,19 @@ let double_fork_treatment server service ((client_descr, _) as client) =
     | k -> ignore (restart_on_EINTR (waitpid []) k)
   in
   try_finalize treat () close client_descr
+;;
 
 let co_treatment _ service ((client_descr, _) as client) =
   try ignore (Thread.create service client) with
   | exn ->
     close client_descr;
     raise exn
+;;
 
 let run_with_lock l f x =
   Mutex.lock l;
   try_finalize f x Mutex.unlock l
+;;
 
 let tcp_farm_server n treat_connection addr =
   let server_sock = install_tcp_server_socket addr in
@@ -110,3 +121,4 @@ let tcp_farm_server n treat_connection addr =
     ignore (Thread.create serve ())
   done;
   serve ()
+;;

@@ -10,12 +10,13 @@ let sleep s =
   let _ = alarm 0 in
   ignore (signal sigalrm old_alarm);
   ignore (sigprocmask SIG_SETMASK old_mask)
+;;
 
 let () =
   let argn = Array.length Sys.argv in
   if argn = 2
   then handle_unix_error sleep (int_of_string Sys.argv.(1))
-  else begin
+  else (
     prerr_endline "Usage: sleep <time>";
-    exit 2
-  end
+    exit 2)
+;;

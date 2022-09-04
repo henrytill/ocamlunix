@@ -4,8 +4,8 @@ let find () =
   let roots = ref [] in
   let usage_string = "Usage: " ^ Sys.argv.(0) ^ " [files...] [options...]" in
   let opt_list =
-    [ ("-maxdepth", Arg.Int (( := ) maxdepth), "max depth search")
-    ; ("-follow", Arg.Set follow, "follow symbolic links")
+    [ "-maxdepth", Arg.Int (( := ) maxdepth), "max depth search"
+    ; "-follow", Arg.Set follow, "follow symbolic links"
     ]
   in
   Arg.parse opt_list (fun f -> roots := f :: !roots) usage_string;
@@ -18,7 +18,11 @@ let find () =
     errors := true;
     prerr_endline (c ^ ": " ^ Unix.error_message e)
   in
-  Findlib.find on_error action !follow !maxdepth
+  Findlib.find
+    on_error
+    action
+    !follow
+    !maxdepth
     (if !roots = [] then [ Filename.current_dir_name ] else List.rev !roots);
   if !errors then exit 1
 ;;

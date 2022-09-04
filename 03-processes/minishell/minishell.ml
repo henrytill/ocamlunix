@@ -2,23 +2,27 @@ open Unix
 open Printf
 
 let split_words s =
-  let rec skip_blanks i = if i < String.length s && s.[i] = ' ' then skip_blanks (i + 1) else i in
+  let rec skip_blanks i =
+    if i < String.length s && s.[i] = ' ' then skip_blanks (i + 1) else i
+  in
   let rec split start i =
     if i >= String.length s
     then [ String.sub s start (i - start) ]
     else if s.[i] = ' '
-    then
+    then (
       let j = skip_blanks i in
-      String.sub s start (i - start) :: split j j
+      String.sub s start (i - start) :: split j j)
     else split start (i + 1)
   in
   Array.of_list (split 0 0)
+;;
 
 let exec_command cmd =
   try execvp cmd.(0) cmd with
   | Unix_error (err, _, _) ->
     printf "Cannot execute %s : %s\n%!" cmd.(0) (error_message err);
     exit 255
+;;
 
 let print_status program status =
   match status with
@@ -26,17 +30,19 @@ let print_status program status =
   | WEXITED status -> printf "%s exited with code %d\n%!" program status
   | WSIGNALED signal -> printf "%s killed by signal %d\n%!" program signal
   | WSTOPPED _ -> printf "%s stopped (???)\n%!" program
+;;
 
 let parse_command_line s =
   let new_s, ampersand =
     try
       let len = String.length s in
-      if String.index s '&' = len - 1 then (String.sub s 0 (len - 2), true) else (s, false)
+      if String.index s '&' = len - 1 then String.sub s 0 (len - 2), true else s, false
     with
-    | Not_found -> (s, false)
+    | Not_found -> s, false
   in
   let words = split_words new_s in
-  (words, ampersand)
+  words, ampersand
+;;
 
 let minishell () =
   try
@@ -48,20 +54,20 @@ let minishell () =
       | pid_son ->
         if ampersand
         then ()
-        else
+        else (
           let rec wait_for_son () =
             let pid, status = wait () in
             if pid = pid_son
             then print_status "Program" status
-            else begin
+            else (
               let p = "Background program " ^ string_of_int pid in
               print_status p status;
-              wait_for_son ()
-            end
+              wait_for_son ())
           in
-          wait_for_son ()
+          wait_for_son ())
     done
   with
   | End_of_file -> ()
+;;
 
 let () = handle_unix_error minishell ()

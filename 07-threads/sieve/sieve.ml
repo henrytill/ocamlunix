@@ -1,7 +1,6 @@
 open Unix
 
 let input_int = input_binary_int
-
 let output_int = output_binary_int
 
 let generate k output =
@@ -10,25 +9,27 @@ let generate k output =
     if m < k then gen (m + 1)
   in
   gen 2
+;;
 
 let print_prime n =
   print_int n;
   print_char '\n'
+;;
 
 let read_first_primes input count =
   let rec read_primes first_primes count =
     if count <= 0
     then first_primes
-    else
+    else (
       let n = input_int input in
       if List.exists (fun m -> n mod m = 0) first_primes
       then read_primes first_primes count
-      else begin
+      else (
         print_prime n;
-        read_primes (n :: first_primes) (count - 1)
-      end
+        read_primes (n :: first_primes) (count - 1)))
   in
   Misc.try_finalize (read_primes []) count flush Stdlib.stdout
+;;
 
 let rec filter input =
   try
@@ -39,7 +40,9 @@ let rec filter input =
     try
       while true do
         let n = input_int input in
-        if List.exists (fun m -> n mod m = 0) first_primes then () else output_int output n
+        if List.exists (fun m -> n mod m = 0) first_primes
+        then ()
+        else output_int output n
       done
     with
     | End_of_file ->
@@ -47,6 +50,7 @@ let rec filter input =
       Thread.join p
   with
   | End_of_file -> ()
+;;
 
 let sieve () =
   let len =
@@ -59,5 +63,6 @@ let sieve () =
   generate len output;
   close_out output;
   Thread.join k
+;;
 
 let () = handle_unix_error sieve ()

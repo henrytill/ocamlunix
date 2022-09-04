@@ -10,3 +10,4 @@ let for_all pred arr =
     true
   with
   | Found -> false
+;;

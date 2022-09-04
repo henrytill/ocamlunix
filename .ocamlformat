@@ -1,16 +1,2 @@
-profile = default
+profile = janestreet
 version = 0.24.1
-
-break-cases = fit-or-vertical
-break-separators = before
-cases-exp-indent = 2
-dock-collection-brackets = false
-exp-grouping = preserve
-if-then-else = keyword-first
-let-and = sparse
-let-module = sparse
-margin = 100
-module-item-spacing = sparse
-parse-docstrings = true
-single-case = sparse
-type-decl = sparse

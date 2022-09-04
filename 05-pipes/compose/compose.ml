@@ -27,5 +27,6 @@ let compose () =
       | Unix_error (ECHILD, _, _) -> retcode
     in
     exit (wait_for_children 0)
+;;
 
 let () = handle_unix_error compose ()

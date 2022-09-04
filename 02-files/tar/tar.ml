@@ -16,7 +16,9 @@ let warning path message = prerr_endline (path ^ ": " ^ message)
 let write_header_to_buffer source infos kind =
   let size = if kind = REG then infos.st_size else 0 in
   Bytes.fill buffer 0 block_size '\000';
-  let put len string offset = String.blit string 0 buffer offset (min (String.length string) len) in
+  let put len string offset =
+    String.blit string 0 buffer offset (min (String.length string) len)
+  in
   let put_int8 x = put 7 (Printf.sprintf "%07o" x) in
   let put_int12 x = put 11 (Printf.sprintf "%011o" x) in
   let put_char c offset = Bytes.set buffer offset c in
@@ -34,22 +36,23 @@ let write_header_to_buffer source infos kind =
   put 31 (getgrgid infos.st_gid).gr_name 297;
   (* Files dev and rdev are only used for special files, which we omit *)
   put_char
-    begin
-      match kind with
-      | REG -> '0'
-      | LINK s ->
-        put_path s 157;
-        '1'
-      | LNK s ->
-        put_path s 157;
-        '2'
-      | DIR -> '5'
-      | _ -> failwith "Special files not implemented"
-    end
+    (match kind with
+     | REG -> '0'
+     | LINK s ->
+       put_path s 157;
+       '1'
+     | LNK s ->
+       put_path s 157;
+       '2'
+     | DIR -> '5'
+     | _ -> failwith "Special files not implemented")
     156;
-  let rec sum s i = if i < 0 then s else sum (s + Char.code (Bytes.get buffer i)) (pred i) in
+  let rec sum s i =
+    if i < 0 then s else sum (s + Char.code (Bytes.get buffer i)) (pred i)
+  in
   let checksum = sum (Char.code ' ' * 8) (block_size - 1) in
   put 8 (Printf.sprintf "%06o\000 " checksum) 148
+;;
 
 let write_file len source fdout =
   let fdin = openfile source [ O_RDONLY ] 0 in
@@ -62,14 +65,14 @@ let write_file len source fdout =
     | r ->
       let len = len - r in
       if len < 0
-      then begin
+      then (
         close fdin;
-        error ()
-      end;
+        error ());
       ignore (write fdout buffer 0 r);
       copy_loop len
   in
   copy_loop len
+;;
 
 let padding fd len = if len > 0 then ignore (write fd (Bytes.make len '\000') 0 len)
 
@@ -78,6 +81,7 @@ let try_new_dir archive dir =
   | Not_found ->
     Hashtbl.add archive.dirfiles dir false;
     true
+;;
 
 let verbose = ref true
 
@@ -89,26 +93,26 @@ let write_from archive file =
     let st = lstat source in
     if st.st_ino = archive.st.st_ino && st.st_dev = archive.st.st_dev
     then warning source "Skipping archive itself!"
-    else
+    else (
       let write_header kind =
         write_header_to_buffer source st kind;
         ignore (write archive.fd buffer 0 block_size)
       in
       match st.st_kind with
-      | S_REG -> begin
-        try
-          if st.st_nlink = 1 then raise Not_found;
-          let path = Hashtbl.find archive.regfiles (st.st_ino, st.st_dev) in
-          write_header (LINK path)
-        with
-        | Not_found ->
-          if st.st_nlink > 1 then Hashtbl.add archive.regfiles (st.st_ino, st.st_dev) source;
-          write_header REG;
-          write_file st.st_size source archive.fd;
-          let t = (block_size - 1 + st.st_size) / block_size * block_size in
-          padding archive.fd (t - st.st_size);
-          archive.size <- archive.size + t + block_size
-      end
+      | S_REG ->
+        (try
+           if st.st_nlink = 1 then raise Not_found;
+           let path = Hashtbl.find archive.regfiles (st.st_ino, st.st_dev) in
+           write_header (LINK path)
+         with
+         | Not_found ->
+           if st.st_nlink > 1
+           then Hashtbl.add archive.regfiles (st.st_ino, st.st_dev) source;
+           write_header REG;
+           write_file st.st_size source archive.fd;
+           let t = (block_size - 1 + st.st_size) / block_size * block_size in
+           padding archive.fd (t - st.st_size);
+           archive.size <- archive.size + t + block_size)
       | S_LNK -> write_header (LNK (readlink source))
       | S_DIR when try_new_dir archive (st.st_ino, st.st_dev) ->
         write_header DIR;
@@ -121,21 +125,27 @@ let write_from archive file =
             else write_rec archive (source ^ "/" ^ file))
           source
       | S_DIR -> warning source "Ignoring directory already in archive"
-      | _ -> prerr_endline ("Can't cope with specia file " ^ source)
+      | _ -> prerr_endline ("Can't cope with specia file " ^ source))
   in
   write_rec archive file
+;;
 
 let min_archive_size = 20 * block_size
 
 let build tarfile files =
   let fd, remove =
     if tarfile = "-"
-    then (stdout, ignore)
-    else (openfile tarfile [ O_WRONLY; O_CREAT; O_TRUNC ] 0o666, unlink)
+    then stdout, ignore
+    else openfile tarfile [ O_WRONLY; O_CREAT; O_TRUNC ] 0o666, unlink
   in
   try
     let arch =
-      { regfiles = Hashtbl.create 13; dirfiles = Hashtbl.create 13; st = fstat fd; fd; size = 0 }
+      { regfiles = Hashtbl.create 13
+      ; dirfiles = Hashtbl.create 13
+      ; st = fstat fd
+      ; fd
+      ; size = 0
+      }
     in
     Array.iter (write_from arch) files;
     padding fd (min_archive_size - arch.size);
@@ -145,19 +155,23 @@ let build tarfile files =
     remove tarfile;
     close fd;
     raise z
+;;
 
 let usage () =
   prerr_endline "Usage: tar -cvf tarfile file1 [ file 2 ... ]";
   exit 2
+;;
 
 let tar () =
   let argn = Array.length Sys.argv in
   if argn > 3 && Sys.argv.(1) = "-cvf"
   then build Sys.argv.(2) (Array.sub Sys.argv 3 (argn - 3))
   else usage ()
+;;
 
 let _ =
   try handle_unix_error tar () with
   | Error (mes, s) ->
     prerr_endline ("Error: " ^ mes ^ ": " ^ s);
     exit 1
+;;
