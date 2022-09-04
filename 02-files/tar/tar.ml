@@ -34,16 +34,18 @@ let write_header_to_buffer source infos kind =
   put 31 (getgrgid infos.st_gid).gr_name 297;
   (* Files dev and rdev are only used for special files, which we omit *)
   put_char
-    (match kind with
-    | REG -> '0'
-    | LINK s ->
-      put_path s 157;
-      '1'
-    | LNK s ->
-      put_path s 157;
-      '2'
-    | DIR -> '5'
-    | _ -> failwith "Special files not implemented")
+    begin
+      match kind with
+      | REG -> '0'
+      | LINK s ->
+        put_path s 157;
+        '1'
+      | LNK s ->
+        put_path s 157;
+        '2'
+      | DIR -> '5'
+      | _ -> failwith "Special files not implemented"
+    end
     156;
   let rec sum s i = if i < 0 then s else sum (s + Char.code (Bytes.get buffer i)) (pred i) in
   let checksum = sum (Char.code ' ' * 8) (block_size - 1) in

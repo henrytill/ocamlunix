@@ -223,7 +223,8 @@ let rec find link inode path =
     let subnode = List.assoc name list in
     let subnode =
       match subnode.info with
-      | Link q -> if link && rest = [] then subnode else find false inode q
+      | Link _ when link && rest = [] -> subnode
+      | Link q -> find false inode q
       | _ -> subnode
     in
     find link subnode rest
