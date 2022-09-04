@@ -20,7 +20,7 @@ let copy () =
     end
     else raise (Invalid_argument "Invalid file names")
   with
-  | _exn ->
+  | _ ->
     Arg.usage opt_list usage_string;
     exit 1
 ;;

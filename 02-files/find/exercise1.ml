@@ -7,7 +7,7 @@ let main () =
     b
   in
   let errors = ref false in
-  let error (e, _c, b) =
+  let error (e, _, b) =
     errors := true;
     prerr_endline (b ^ ": " ^ error_message e)
   in

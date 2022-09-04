@@ -49,17 +49,6 @@ let write_header_to_buffer source infos kind =
   let checksum = sum (Char.code ' ' * 8) (block_size - 1) in
   put 8 (Printf.sprintf "%06o\000 " checksum) 148
 
-(* let header source infos kind =
- *   { name  = source;
- *     size  = if kind = REG then infos.st_size else 0;
- *     perm  = infos.st_perm;
- *     mtime = int_of_float infos.st_mtime;
- *     uid   = infos.st_uid;
- *     gid   = infos.st_gid;
- *     user  = (getpwuid infos.st_uid).pw_name;
- *     group = (getgrgid infos.st_gid).gr_name;
- *     kind  = kind }
- *)
 let write_file len source fdout =
   let fdin = openfile source [ O_RDONLY ] 0 in
   let error () = raise (Error ("File changed size", source)) in

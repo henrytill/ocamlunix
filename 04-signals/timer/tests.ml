@@ -1,11 +1,3 @@
-(* let timer_t =
- *   let module M = struct
- *     type t = Timer.t
- *     let equal x y = x = y
- *     let pp ppf x = Format.pp_print_string ppf (Timer.to_string x)
- *   end in
- *   (module M : Alcotest.TESTABLE with type t = M.t)
- *)
 let interval_timer_status_t =
   let module M = struct
     type t = Unix.interval_timer_status

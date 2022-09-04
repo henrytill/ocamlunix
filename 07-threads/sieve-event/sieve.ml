@@ -1,7 +1,6 @@
 type 'a buffered =
   { c : 'a Queue.t Event.channel
   ; mutable q : 'a Queue.t
-  ; _size : int
   }
 
 let pipe () =
@@ -10,7 +9,7 @@ let pipe () =
 
 let size = 1024
 
-let out_channel_of_descr chan = { c = chan; q = Queue.create (); _size = size }
+let out_channel_of_descr chan = { c = chan; q = Queue.create () }
 
 let in_channel_of_descr = out_channel_of_descr
 

@@ -63,7 +63,7 @@ let tcp_server treat_connection addr =
     treat_connection server_sock client
   done
 
-let sequential_treatment _server service client = service client
+let sequential_treatment _ service client = service client
 
 let fork_treatment server service ((client_sock, _) as client) =
   let treat () =
@@ -88,7 +88,7 @@ let double_fork_treatment server service ((client_descr, _) as client) =
   in
   try_finalize treat () close client_descr
 
-let co_treatment _server_sock service ((client_descr, _) as client) =
+let co_treatment _ service ((client_descr, _) as client) =
   try ignore (Thread.create service client) with
   | exn ->
     close client_descr;

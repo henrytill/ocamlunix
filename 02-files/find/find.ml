@@ -9,12 +9,12 @@ let find () =
     ]
   in
   Arg.parse opt_list (fun f -> roots := f :: !roots) usage_string;
-  let action p _infos =
+  let action p _ =
     print_endline p;
     true
   in
   let errors = ref false in
-  let on_error (e, _b, c) =
+  let on_error (e, _, c) =
     errors := true;
     prerr_endline (c ^ ": " ^ Unix.error_message e)
   in
