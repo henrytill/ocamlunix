@@ -9,4 +9,4 @@ let for_all pred arr =
     done;
     true
   with
-    Found -> false
+  | Found -> false

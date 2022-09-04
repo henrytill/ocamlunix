@@ -1,9 +1,10 @@
 open Unix
 
 type t =
-  { timer    : interval_timer;
-    interval : float;
-    value    : float; }
+  { timer : interval_timer
+  ; interval : float
+  ; value : float
+  }
 
 val new_timer : interval_timer -> (unit -> unit) -> t
 

@@ -40,5 +40,4 @@
  *     done
  *   with End_of_file -> ()
  *)
-let () =
-  print_endline "Hello world!"
+let () = print_endline "Hello world!"

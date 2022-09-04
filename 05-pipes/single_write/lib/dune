@@ -1,7 +1,9 @@
 (library
  (name ex)
  (modules)
- (foreign_stubs (language c) (names ex)))
+ (foreign_stubs
+  (language c)
+  (names ex)))
 
 (library
  (name single_write)

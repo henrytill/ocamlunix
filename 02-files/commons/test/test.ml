@@ -6,8 +6,8 @@ let read_file_as_string file =
       while true do
         actual := !actual ^ String.make 1 (Commons.input_char chan)
       done
-    with Commons.End_of_file ->
-      Commons.close_in chan
+    with
+    | Commons.End_of_file -> Commons.close_in chan
   end;
   !actual
 
@@ -22,9 +22,6 @@ let round_trip_string_test () =
   let expected = "This is a test" in
   Alcotest.(check string) "same string" expected (round_trip_string expected)
 
-let test_set = [
-  "round trip a string to a file", `Quick, round_trip_string_test;
-]
+let test_set = [ ("round trip a string to a file", `Quick, round_trip_string_test) ]
 
-let () =
-  Alcotest.run "Commons" ["test_set", test_set;]
+let () = Alcotest.run "Commons" [ ("test_set", test_set) ]
