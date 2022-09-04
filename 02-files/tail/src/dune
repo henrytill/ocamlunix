@@ -1,0 +1,9 @@
+(library
+ (name tail)
+ (modules tail)
+ (libraries misc))
+
+(executable
+ (name main)
+ (modules main)
+ (libraries tail))

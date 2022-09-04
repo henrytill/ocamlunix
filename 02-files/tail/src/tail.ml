@@ -28,12 +28,12 @@ let get_n_indices bytes n : int list =
 let operate_on_bytes_at_indices source indices k : unit =
   let rec loop remaining count =
     match remaining with
-    | []                     -> ()
-    | right :: []            -> ()
-    | 0     :: right :: rest ->
+    | []                    -> ()
+    | _  :: []              -> ()
+    | 0  :: right :: rest   ->
       k (Bytes.sub source 0 (right + 1)) count;
       loop (right :: rest) (count + 1)
-    | left  :: right :: rest ->
+    | left :: right :: rest ->
       k (Bytes.sub source (left + 1) (right - left)) count;
       loop (right :: rest) (count + 1)
   in

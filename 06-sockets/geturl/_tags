@@ -1,4 +1,0 @@
-true : bin_annot, thread, package(unix), package(str), package(threads)
-<lib> : include
-<misc> : include
-<src> : include

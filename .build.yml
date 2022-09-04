@@ -1,6 +1,7 @@
 image: debian/stable
 packages:
   - build-essential
+  - ocaml
   - opam
   - m4
   - darcs
@@ -8,13 +9,21 @@ packages:
 sources:
   - https://git.sr.ht/~henrytill/ocamlunix
 tasks:
-  - setup: |
+  - opam-init: |
       opam init -yaq
+  - opam-switch: |
+      eval $(opam env)
+      opam switch create 4.13.0
+      opam switch set 4.13.0
+  - opam-install: |
+      eval $(opam env)
+      cd ocamlunix
+      opam install -yq --deps-only --with-test .
   - build: |
       eval $(opam env)
       cd ocamlunix
-      ./build
+      dune build
   - test: |
       eval $(opam env)
       cd ocamlunix
-      ./build tests
+      dune test --force

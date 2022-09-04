@@ -1,7 +1,0 @@
-S src
-S misc
-S test
-
-B _build/**
-
-PKG alcotest

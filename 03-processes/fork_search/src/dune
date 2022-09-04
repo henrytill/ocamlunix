@@ -1,0 +1,3 @@
+(executable
+ (name fork_search)
+ (libraries unix))

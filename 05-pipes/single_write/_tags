@@ -1,3 +1,0 @@
-true              : bin_annot
-<lib/*.cm{x,}a>   : use_ex
-<src/demo.native> : use_ex

@@ -1,5 +1,0 @@
-true     : bin_annot, thread, package(unix), package(threads)
-<test/*> : package(alcotest)
-<misc>   : include
-<src>    : include
-<test>   : include

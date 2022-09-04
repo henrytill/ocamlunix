@@ -8,7 +8,7 @@ let simple_search cond v =
     false
   with Found -> true
 
-let rec psearch k cond v =
+let psearch k cond v =
   let n = Array.length v in
   let slice i = Array.sub v (i * k) (min k (n - i * k)) in
   let slices = Array.init (n/k) slice in

@@ -1,0 +1,3 @@
+(executable
+ (name compose)
+ (libraries unix))

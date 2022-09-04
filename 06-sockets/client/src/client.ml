@@ -1,4 +1,3 @@
-open Sys
 open Unix
 
 let client () =

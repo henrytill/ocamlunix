@@ -1,0 +1,9 @@
+(library
+ (name ex)
+ (modules)
+ (foreign_stubs (language c) (names ex)))
+
+(library
+ (name single_write)
+ (modules single_write)
+ (libraries ex))

@@ -2,9 +2,9 @@
     {{: https://ocaml.github.io/ocamlunix/ocamlunix.html }
      {i Unix system programming in OCaml }}. *)
 
-val try_finalize : ('a -> 'b) -> 'a -> ('c -> 'd) -> 'c -> 'b
+val try_finalize : ('a -> 'b) -> 'a -> ('c -> unit) -> 'c -> 'b
 
-val iter_dir : (string -> 'a) -> string -> unit
+val iter_dir : (string -> unit) -> string -> unit
 
 val restart_on_EINTR : ('a -> 'b) -> 'a -> 'b
 (** Repeat a system call when it is interrupted by a signal, i.e. when the
@@ -28,7 +28,7 @@ val install_tcp_server_socket : Unix.sockaddr -> Unix.file_descr
     [addr] with [bind] and [listen].  We close the socket in case of an
     error. *)
 
-val tcp_server : (Unix.file_descr -> Unix.file_descr * Unix.sockaddr -> 'a) -> Unix.sockaddr -> unit
+val tcp_server : (Unix.file_descr -> Unix.file_descr * Unix.sockaddr -> unit) -> Unix.sockaddr -> unit
 (** Creates a socket with [install_tcp_server_socket] and enters an infinite
     loop.  At each iteration of the loop it waits for a connection request with
     [accept] and treats it with the function [treat_connection].  We restart the
@@ -43,7 +43,7 @@ val tcp_server : (Unix.file_descr -> Unix.file_descr * Unix.sockaddr -> 'a) -> U
 
 val sequential_treatment : 'a -> ('b -> 'c) -> 'b -> 'c
 
-val fork_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> Unix.file_descr * 'a -> unit
+val fork_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> unit) -> Unix.file_descr * 'a -> unit
 (** Delegates a service to a child process.  The child process handles the
     connection and the parent process immediately retries to [accept].
 
@@ -60,7 +60,7 @@ val fork_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> Unix.fil
     after the execution of the service and that it does not start to execute the
     server loop. *)
 
-val double_fork_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> Unix.file_descr * 'a -> unit
+val double_fork_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> unit) -> Unix.file_descr * 'a -> unit
 (** Double forks a service so that children can recovered *)
 
 val co_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> Unix.file_descr * 'a -> unit
@@ -68,7 +68,7 @@ val co_treatment : Unix.file_descr -> (Unix.file_descr * 'a -> 'b) -> Unix.file_
 val run_with_lock : Mutex.t -> ('a -> 'b) -> 'a -> 'b
 (** Hold a lock temporarily during a function call. *)
 
-val tcp_farm_server : int -> (Unix.file_descr -> Unix.file_descr * Unix.sockaddr -> 'a) -> Unix.sockaddr -> unit
+val tcp_farm_server : int -> (Unix.file_descr -> Unix.file_descr * Unix.sockaddr -> unit) -> Unix.sockaddr -> unit
 (** The [tcp_farm_server] function behaves like tcp_server but takes an
     additional argument which is the number of threads to start, each of which
     will become a server at the same address. The advantage of a pool of threads

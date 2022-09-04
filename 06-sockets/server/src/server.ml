@@ -1,4 +1,3 @@
-open Sys
 open Unix
 
 let server () =
@@ -11,7 +10,7 @@ let server () =
   let args = Array.sub Sys.argv 2 (Array.length Sys.argv - 2) in
   let host = (gethostbyname (gethostname ())).h_addr_list.(0) in
   let addr = ADDR_INET (host, port) in
-  let treat sock (client_sock, client_addr as client) =
+  let treat sock (_client_sock, client_addr as client) =
     (* log information *)
     begin
       match client_addr with

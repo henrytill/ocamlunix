@@ -1,5 +1,0 @@
-S src
-S file_copy
-S misc
-
-B _build/**

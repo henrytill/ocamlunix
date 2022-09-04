@@ -1,0 +1,3 @@
+(executable
+ (name geturl)
+ (libraries unix url))

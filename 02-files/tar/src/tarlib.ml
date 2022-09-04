@@ -276,7 +276,7 @@ let find_and_copy_v2 tarfile filename =
     with Not_found -> error filename "File not found" in
   begin
     match inode.record with
-    | Some ({ header = { kind = (REG | CONT) }} as r) -> copy_file r stdout
+    | Some ({ header = { kind = (REG | CONT); _ }; _ } as r) -> copy_file r stdout
     | Some _ -> error filename "Not a regular file"
     | None   -> error filename "Not found"
   end;
@@ -323,8 +323,8 @@ let set_infos header =
   utimes header.name mtime mtime;
   begin
     match header.kind with
-    | LNK f -> ()
-    | _ -> chmod header.name header.perm
+    | LNK _ -> ()
+    | _     -> chmod header.name header.perm
   end;
   try chown header.name header.uid header.gid
   with Unix_error(EPERM, _, _) -> ()

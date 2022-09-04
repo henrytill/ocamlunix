@@ -1,0 +1,19 @@
+(library
+ (name findlib)
+ (modules findlib)
+ (libraries misc))
+
+(executable
+ (name exercise1)
+ (modules exercise1)
+ (libraries findlib))
+
+(executable
+ (name find)
+ (modules find)
+ (libraries findlib misc))
+
+(executable
+ (name getcwd)
+ (modules exercise2 getcwd)
+ (libraries misc))

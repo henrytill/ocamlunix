@@ -1,0 +1,3 @@
+(executable
+ (name copyrec)
+ (libraries file_copy misc unix))

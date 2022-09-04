@@ -1,0 +1,24 @@
+(library
+ (name tarlib)
+ (modules tarlib)
+ (libraries unix))
+
+(executable
+ (name readtar_v1)
+ (modules readtar_v1)
+ (libraries tarlib))
+
+(executable
+ (name readtar_v2)
+ (modules readtar_v2)
+ (libraries tarlib))
+
+(executable
+ (name tar)
+ (modules tar)
+ (libraries misc tarlib))
+
+(executable
+ (name untar)
+ (modules untar)
+ (libraries tarlib))

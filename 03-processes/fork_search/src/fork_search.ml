@@ -19,9 +19,8 @@ let fork_search cond v =
   | _ ->
       let found = simple_search cond (Array.sub v 0 (n / 2)) in
       match wait () with
-      | (pid, WEXITED retcode) -> found || (retcode = 0)
-      | (pid, _)               -> failwith "fork_search"
-
+      | (_, WEXITED retcode) -> found || (retcode = 0)
+      | (_, _)               -> failwith "fork_search"
 let () =
   fork_search (fun x -> x = 4_999_999) (Array.init 5_000_000 (fun x -> x))
   |> string_of_bool

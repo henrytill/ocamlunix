@@ -1,4 +1,3 @@
-open Sys
 open Unix
 
 let compose () =
@@ -23,8 +22,8 @@ let compose () =
       let rec wait_for_children retcode =
         try
           match wait () with
-          | (pid, WEXITED n) -> wait_for_children (retcode lor n)
-          | (pid, _)         -> wait_for_children 127
+          | (_, WEXITED n) -> wait_for_children (retcode lor n)
+          | (_, _)         -> wait_for_children 127
         with Unix_error(ECHILD, _, _) ->
           retcode
       in

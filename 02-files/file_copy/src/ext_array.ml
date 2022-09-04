@@ -1,6 +1,8 @@
+include Array
+
 exception Found
 
-let for_all (pred: 'a -> bool) (arr: 'a array): bool =
+let for_all pred arr =
   try
     for i = 0 to Array.length arr - 1 do
       if not (pred arr.(i)) then raise Found
@@ -8,5 +10,3 @@ let for_all (pred: 'a -> bool) (arr: 'a array): bool =
     true
   with
     Found -> false
-
-include Array

@@ -1,3 +1,0 @@
-<test/*> : package(alcotest)
-<src>    : include
-<test>   : include

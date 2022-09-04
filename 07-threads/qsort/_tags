@@ -1,2 +1,0 @@
-true : bin_annot, thread, package(threads)
-<src> : include

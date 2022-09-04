@@ -34,7 +34,7 @@ let print_status program status =
       printf "%s exited with code %d\n%!" program status
   | WSIGNALED signal ->
       printf "%s killed by signal %d\n%!" program signal
-  | WSTOPPED signal ->
+  | WSTOPPED _ ->
       printf "%s stopped (???)\n%!" program
 
 let parse_command_line s =

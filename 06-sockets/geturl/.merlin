@@ -1,4 +1,0 @@
-S src
-S lib
-S misc
-B _build/**

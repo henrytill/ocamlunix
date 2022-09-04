@@ -2,7 +2,7 @@ open Sys
 open Unix
 
 let sleep s =
-  let old_alarm = signal sigalrm (Signal_handle (fun s -> ())) in
+  let old_alarm = signal sigalrm (Signal_handle (fun _ -> ())) in
   let old_mask = sigprocmask SIG_UNBLOCK [ sigalrm ] in
   let _ = alarm s in
   let new_mask = List.filter (fun x -> x <> sigalrm) old_mask in

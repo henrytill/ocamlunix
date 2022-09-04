@@ -1,4 +1,0 @@
-true     : bin_annot
-<test/*> : package(alcotest)
-<lib>    : include
-<test>   : include
