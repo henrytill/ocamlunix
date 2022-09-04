@@ -1,5 +1,5 @@
 open Unix
-open Common
+module Array = Ext_array
 
 let copy () =
   let append = ref false in

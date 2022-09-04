@@ -1,0 +1,9 @@
+(library
+ (name url)
+ (modules url)
+ (libraries misc str unix))
+
+(executable
+ (name geturl)
+ (modules geturl)
+ (libraries unix url))

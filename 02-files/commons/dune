@@ -1,0 +1,14 @@
+(library
+ (name commons)
+ (modules commons)
+ (libraries unix))
+
+(executable
+ (name main)
+ (modules main)
+ (libraries commons))
+
+(test
+ (name test)
+ (modules test)
+ (libraries commons misc alcotest))

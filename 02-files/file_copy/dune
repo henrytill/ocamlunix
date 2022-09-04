@@ -1,0 +1,9 @@
+(library
+ (name file_copy)
+ (modules file_copy)
+ (libraries unix))
+
+(executable
+ (name main)
+ (modules ext_array main)
+ (libraries file_copy unix))

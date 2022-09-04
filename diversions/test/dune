@@ -1,3 +1,0 @@
-(test
- (name all_tests)
- (libraries alcotest circular_buffer))

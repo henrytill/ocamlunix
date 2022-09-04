@@ -1,0 +1,9 @@
+(library
+ (name timer)
+ (modules timer)
+ (libraries unix))
+
+(test
+ (name tests)
+ (modules tests)
+ (libraries alcotest timer))

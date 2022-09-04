@@ -9,3 +9,8 @@
  (name single_write)
  (modules single_write)
  (libraries ex))
+
+(executable
+ (name demo)
+ (modules demo)
+ (libraries misc single_write))

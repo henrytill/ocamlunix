@@ -7,3 +7,8 @@
  (name main)
  (modules main)
  (libraries tail))
+
+(test
+ (name all_tests)
+ (modules all_tests common lines_test tail_test)
+ (libraries alcotest misc tail))

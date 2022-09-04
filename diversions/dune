@@ -1,0 +1,8 @@
+(library
+ (name circular_buffer)
+ (modules circular_buffer))
+
+(test
+ (name all_tests)
+ (modules all_tests circular_buffer_test common)
+ (libraries alcotest circular_buffer))
