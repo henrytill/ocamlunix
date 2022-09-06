@@ -38,5 +38,3 @@ let multiplex channel inputs outputs =
   with
   | End_of_file -> ()
 ;;
-
-let () = print_endline "Hello world!"
