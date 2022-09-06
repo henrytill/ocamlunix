@@ -3,6 +3,6 @@
 
 #include <caml/mlvalues.h>
 
-CAMLprim value caml_single_write (value, value, value, value);
+CAMLprim value caml_single_write(value, value, value, value);
 
 #endif
