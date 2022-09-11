@@ -17,7 +17,5 @@
  (description "Work from Leroy and Rémy's 'Unix system programming in OCaml'")
  (depends
   (ocaml (>= 4.13.0))
-  dune
+   dune
   (alcotest :with-test)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
