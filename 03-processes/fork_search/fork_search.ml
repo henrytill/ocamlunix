@@ -16,9 +16,11 @@ let fork_search cond v =
   let n = Array.length v in
   match fork () with
   | 0 ->
+    (* child process *)
     let found = simple_search cond (Array.sub v (n / 2) (n - (n / 2))) in
     exit (if found then 0 else 1)
   | _ ->
+    (* parent process *)
     let found = simple_search cond (Array.sub v 0 (n / 2)) in
     (match wait () with
      | _, WEXITED retcode -> found || retcode = 0
