@@ -1,17 +1,14 @@
+.SUFFIXES:
+
 DUNE = dune
 
 .PHONY: all
-all:
-	@$(DUNE) build
+all: build
 
 .PHONY: test check
 test check:
-	@$(DUNE) test -f
+	$(DUNE) test -f
 
-.PHONY: fmt
-fmt:
-	@$(DUNE) fmt
-
-.PHONY: clean
-clean:
-	@$(DUNE) clean
+.PHONY: build fmt clean
+build fmt clean:
+	$(DUNE) $@
