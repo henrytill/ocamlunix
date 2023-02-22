@@ -16,25 +16,15 @@
   outputs = { self, flake-utils, opam-nix, nixpkgs, ... }@inputs:
     let
       package = "ocamlunix";
-      duneFilter = path: type: type != "directory" || baseNameOf path != "_build";
-      opamFilter = path: type: type != "directory" || baseNameOf path != "_opam";
     in
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         on = opam-nix.lib.${system};
-        processSource = input:
-          with pkgs.lib; cleanSourceWith {
-            filter = duneFilter;
-            src = cleanSourceWith {
-              filter = opamFilter;
-              src = cleanSource input;
-            };
-          };
         args = {
           resolveArgs.with-test = true;
         };
-        src = processSource ./.;
+        src = builtins.path { path = ./.; name = "ocamlunix-src"; };
         query = { ocaml-base-compiler = "4.14.1"; };
         scope = on.buildDuneProject args package src query;
         overlay = final: prev: {};
