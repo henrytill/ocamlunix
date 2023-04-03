@@ -1,0 +1,27 @@
+name: OCaml CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ocaml-compiler: 
+        - 4.14.x
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use OCaml ${{ matrix.ocaml-compiler }}
+      uses: ocaml/setup-ocaml@v2
+      with:
+        ocaml-compiler: ${{ matrix.ocaml-compiler }}
+    - name: Install dependencies
+      run: opam install . --deps-only --with-test
+    - name: dune build
+      run: opam exec -- dune build
+    - name: dune runtest
+      run: opam exec -- dune runtest
