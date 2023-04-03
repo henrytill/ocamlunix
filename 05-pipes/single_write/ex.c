@@ -7,8 +7,7 @@
 
 #include "ex.h"
 
-CAMLprim value caml_single_write(value fd, value buf, value vofs, value vlen)
-{
+CAMLprim value caml_single_write(value fd, value buf, value vofs, value vlen) {
   CAMLparam4(fd, buf, vofs, vlen);
   long ofs, len;
   int numbytes, ret;
