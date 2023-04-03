@@ -8,8 +8,8 @@ let interval_timer_status_t =
       Format.pp_print_string
         ppf
         (let open Unix in
-        let { it_interval = i; it_value = v } = x in
-        Printf.sprintf "{ it_interval = %f; it_value = %f }" i v)
+         let { it_interval = i; it_value = v } = x in
+         Printf.sprintf "{ it_interval = %f; it_value = %f }" i v)
     ;;
   end
   in
