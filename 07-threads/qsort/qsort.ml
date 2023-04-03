@@ -5,7 +5,7 @@ let swap arr i j =
 ;;
 
 let qsort cmp arr =
-  let rec qsort lo hi =
+  let rec go lo hi =
     if hi - lo > 0
     then (
       let mid = (lo + hi) lsr 1 in
@@ -26,12 +26,12 @@ let qsort cmp arr =
         done;
         if !i < !j then swap arr !i !j
       done;
-      let u = Thread.create (qsort lo) (!i - 1) in
-      let v = Thread.create (qsort (!i + 1)) hi in
+      let u = Thread.create (go lo) (!i - 1) in
+      let v = Thread.create (go (!i + 1)) hi in
       Thread.join u;
       Thread.join v)
   in
-  qsort 0 (Array.length arr - 1)
+  go 0 (Array.length arr - 1)
 ;;
 
 let () =
