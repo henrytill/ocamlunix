@@ -4,8 +4,8 @@ synopsis: "Unix system programming in OCaml"
 description: "Work from Leroy and Rémy's 'Unix system programming in OCaml'"
 maintainer: ["Henry Till <henrytill@gmail.com>"]
 authors: ["Henry Till <henrytill@gmail.com>"]
-homepage: "https://sr.ht/~henrytill/ocamlunix"
-bug-reports: "https://todo.sr.ht/~henrytill/ocamlunix"
+homepage: "https://github.com/henrytill/ocamlunix"
+bug-reports: "https://github.com/henrytill/ocamlunix/issues"
 depends: [
   "ocaml" {>= "4.13.0"}
   "dune" {>= "3.4"}
@@ -26,4 +26,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://git.sr.ht/~henrytill/ocamlunix"
+dev-repo: "git+https://github.com/henrytill/ocamlunix.git"

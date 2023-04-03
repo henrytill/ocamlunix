@@ -1,3 +1,3 @@
 # ocamlunix
 
-[![builds.sr.ht status](https://builds.sr.ht/~henrytill/ocamlunix/commits/master.svg)](https://builds.sr.ht/~henrytill/ocamlunix/commits/master?)
+[![OCaml CI](https://github.com/henrytill/ocamlunix/actions/workflows/ocaml.yml/badge.svg)](https://github.com/henrytill/ocamlunix/actions/workflows/ocaml.yml)
