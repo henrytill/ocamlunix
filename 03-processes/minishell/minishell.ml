@@ -1,6 +1,3 @@
-open Unix
-open Printf
-
 let split_words s =
   let rec skip_blanks i =
     if i < String.length s && s.[i] = ' ' then skip_blanks (i + 1) else i
@@ -18,18 +15,19 @@ let split_words s =
 ;;
 
 let exec_command cmd =
-  try execvp cmd.(0) cmd with
-  | Unix_error (err, _, _) ->
-    printf "Cannot execute %s : %s\n%!" cmd.(0) (error_message err);
+  try Unix.execvp cmd.(0) cmd with
+  | Unix.Unix_error (err, _, _) ->
+    Printf.printf "Cannot execute %s : %s\n%!" cmd.(0) (Unix.error_message err);
     exit 255
 ;;
 
 let print_status program status =
-  match status with
-  | WEXITED 255 -> ()
-  | WEXITED status -> printf "%s exited with code %d\n%!" program status
-  | WSIGNALED signal -> printf "%s killed by signal %d\n%!" program signal
-  | WSTOPPED _ -> printf "%s stopped (???)\n%!" program
+  Unix.(
+    match status with
+    | WEXITED 255 -> ()
+    | WEXITED status -> Printf.printf "%s exited with code %d\n%!" program status
+    | WSIGNALED signal -> Printf.printf "%s killed by signal %d\n%!" program signal
+    | WSTOPPED _ -> Printf.printf "%s stopped (???)\n%!" program)
 ;;
 
 let parse_command_line s =
@@ -49,14 +47,14 @@ let minishell () =
     while true do
       let cmd = input_line Stdlib.stdin in
       let words, ampersand = parse_command_line cmd in
-      match fork () with
+      match Unix.fork () with
       | 0 -> exec_command words
       | pid_son ->
         if ampersand
         then ()
         else (
           let rec wait_for_son () =
-            let pid, status = wait () in
+            let pid, status = Unix.wait () in
             if pid = pid_son
             then print_status "Program" status
             else (
@@ -70,4 +68,4 @@ let minishell () =
   | End_of_file -> ()
 ;;
 
-let () = handle_unix_error minishell ()
+let () = Unix.handle_unix_error minishell ()

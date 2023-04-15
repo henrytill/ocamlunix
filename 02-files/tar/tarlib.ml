@@ -1,5 +1,3 @@
-open Unix
-
 type kind =
   | REG
   | LNK of string
@@ -25,7 +23,7 @@ type header =
 type record =
   { header : header
   ; offset : int
-  ; descr : file_descr
+  ; descr : Unix.file_descr
   }
 
 exception Error of string * string
@@ -86,7 +84,7 @@ let rec really_read fd buffer start length =
   if length <= 0
   then ()
   else (
-    match read fd buffer start length with
+    match Unix.read fd buffer start length with
     | 0 -> raise End_of_file
     | r -> really_read fd buffer (start + r) (length + r))
 ;;
@@ -102,7 +100,7 @@ let buffer_size = block_size
 let buffer = Bytes.create buffer_size
 
 let read_header fd =
-  let len = read fd buffer 0 buffer_size in
+  let len = Unix.read fd buffer 0 buffer_size in
   if len = 0 || Bytes.get buffer 0 = '\000'
   then None
   else (
@@ -113,7 +111,7 @@ let read_header fd =
 
 let fold f initial fd =
   let rec fold_aux offset accu =
-    ignore (without_end_of_file (lseek fd offset) SEEK_SET);
+    ignore Unix.(without_end_of_file (lseek fd offset) SEEK_SET);
     match without_end_of_file read_header fd with
     | None -> accu
     | Some h ->
@@ -124,13 +122,13 @@ let fold f initial fd =
 ;;
 
 let list tarfile =
-  let fd = openfile tarfile [ O_RDONLY ] 0o0 in
+  let fd = Unix.(openfile tarfile [ O_RDONLY ] 0o0) in
   let add r () =
     print_string r.header.name;
     print_newline ()
   in
   fold add () fd;
-  close fd
+  Unix.close fd
 ;;
 
 let rec find_regular r list =
@@ -146,14 +144,14 @@ and find_file name list =
 ;;
 
 let copy_file file output =
-  ignore (lseek file.descr file.offset SEEK_SET);
+  ignore Unix.(lseek file.descr file.offset SEEK_SET);
   let rec copy_loop len =
     if len > 0
     then (
-      match read file.descr buffer 0 (min buffer_size len) with
+      match Unix.read file.descr buffer 0 (min buffer_size len) with
       | 0 -> end_of_file_error ()
       | r ->
-        ignore (write output buffer 0 r);
+        ignore (Unix.write output buffer 0 r);
         copy_loop (len - r))
   in
   copy_loop file.header.size
@@ -162,11 +160,11 @@ let copy_file file output =
 exception Done
 
 let find_and_copy_v1 tarfile filename =
-  let fd = openfile tarfile [ O_RDONLY ] 0o0 in
+  let fd = Unix.(openfile tarfile [ O_RDONLY ] 0o0) in
   let found_or_collect r accu =
     if r.header.name = filename
     then (
-      copy_file (find_regular r accu) stdout;
+      copy_file (find_regular r accu) Unix.stdout;
       raise Done)
     else r :: accu
   in
@@ -174,7 +172,7 @@ let find_and_copy_v1 tarfile filename =
     ignore (fold found_or_collect [] fd);
     error "File not found" filename
   with
-  | Done -> close fd
+  | Done -> Unix.close fd
 ;;
 
 let readtar_v1 () =
@@ -285,7 +283,7 @@ let add archive r =
 ;;
 
 let find_and_copy_v2 tarfile filename =
-  let fd = openfile tarfile [ O_RDONLY ] 0 in
+  let fd = Unix.(openfile tarfile [ O_RDONLY ] 0) in
   let records = List.rev (fold (fun x y -> x :: y) [] fd) in
   let archive = root () in
   List.iter (add archive) records;
@@ -294,10 +292,10 @@ let find_and_copy_v2 tarfile filename =
     | Not_found -> error filename "File not found"
   in
   (match inode.record with
-   | Some ({ header = { kind = REG | CONT; _ }; _ } as r) -> copy_file r stdout
+   | Some ({ header = { kind = REG | CONT; _ }; _ } as r) -> copy_file r Unix.stdout
    | Some _ -> error filename "Not a regular file"
    | None -> error filename "Not found");
-  close fd
+  Unix.close fd
 ;;
 
 let readtar_v2 () =
@@ -321,8 +319,8 @@ let mkpath p perm =
   let normal_path = if basename p = "" then dirname p else p in
   let path_to_dir = dirname normal_path in
   let rec make p =
-    try ignore (stat p) with
-    | Unix_error (ENOENT, _, _) ->
+    try ignore (Unix.stat p) with
+    | Unix.Unix_error (ENOENT, _, _) ->
       if p = current_dir_name
       then ()
       else if p = parent_dir_name
@@ -335,14 +333,14 @@ let mkpath p perm =
 ;;
 
 let set_infos header =
-  chmod header.name header.perm;
+  Unix.chmod header.name header.perm;
   let mtime = float header.mtime in
-  utimes header.name mtime mtime;
+  Unix.utimes header.name mtime mtime;
   (match header.kind with
    | LNK _ -> ()
-   | _ -> chmod header.name header.perm);
-  try chown header.name header.uid header.gid with
-  | Unix_error (EPERM, _, _) -> ()
+   | _ -> Unix.chmod header.name header.perm);
+  try Unix.chown header.name header.uid header.gid with
+  | Unix.Unix_error (EPERM, _, _) -> ()
 ;;
 
 let verbose = ref true
@@ -361,7 +359,7 @@ let protect f x g y =
 
 let file_exists f =
   try
-    ignore (stat f);
+    ignore (Unix.stat f);
     true
   with
   | _ -> false
@@ -388,13 +386,13 @@ let untar_file_collect_dirs file dirs =
     mkpath fh.name default_dir_perm;
     (match x with
      | REG | CONT ->
-       let flags = [ O_WRONLY; O_TRUNC; O_CREAT ] in
-       let out = openfile fh.name flags default_file_perm in
-       protect (copy_file file) out close out
+       let flags = Unix.[ O_WRONLY; O_TRUNC; O_CREAT ] in
+       let out = Unix.openfile fh.name flags default_file_perm in
+       protect (copy_file file) out Unix.close out
      | LNK f -> Unix.symlink f fh.name
      | LINK f ->
-       (try if (stat fh.name).st_kind = S_REG then unlink fh.name with
-        | Unix_error (_, _, _) -> ());
+       (try if Unix.(stat fh.name).st_kind = S_REG then Unix.unlink fh.name with
+        | Unix.Unix_error (_, _, _) -> ());
        Unix.link f fh.name
      | _ -> assert false);
     set_infos fh;
@@ -402,8 +400,8 @@ let untar_file_collect_dirs file dirs =
 ;;
 
 let extract tarfile =
-  let fd = openfile tarfile [ O_RDONLY ] 0 in
+  let fd = Unix.(openfile tarfile [ O_RDONLY ] 0) in
   let new_directories = fold untar_file_collect_dirs [] fd in
   List.iter set_infos new_directories;
-  close fd
+  Unix.close fd
 ;;

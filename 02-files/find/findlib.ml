@@ -1,5 +1,3 @@
-open Unix
-
 exception Hidden of exn
 
 let hide_exn f x =
@@ -15,7 +13,7 @@ let reveal_exn f x =
 let find on_error on_path follow depth roots =
   let rec find_rec depth visiting filename =
     try
-      let infos = (if follow then stat else lstat) filename in
+      let infos = Unix.(if follow then stat else lstat) filename in
       let continue = hide_exn (on_path filename) infos in
       let id = infos.st_dev, infos.st_ino in
       if infos.st_kind = S_DIR
@@ -32,7 +30,7 @@ let find on_error on_path follow depth roots =
         in
         Misc.iter_dir process_child filename)
     with
-    | Unix_error (e, b, c) -> hide_exn on_error (e, b, c)
+    | Unix.Unix_error (e, b, c) -> hide_exn on_error (e, b, c)
   in
   reveal_exn (List.iter (find_rec depth [])) roots
 ;;

@@ -1,4 +1,3 @@
-open Unix
 module Array = Ext_array
 
 let copy () =
@@ -26,4 +25,4 @@ let copy () =
     exit 1
 ;;
 
-handle_unix_error copy ()
+Unix.handle_unix_error copy ()

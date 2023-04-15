@@ -1,9 +1,7 @@
-open Unix
-
 let read_passwd message =
   match
     try
-      let default = tcgetattr stdin in
+      let default = Unix.(tcgetattr stdin) in
       let silent =
         { default with
           c_echo = false
@@ -20,14 +18,14 @@ let read_passwd message =
   | Some (default, silent) ->
     print_string message;
     flush Stdlib.stdout;
-    tcsetattr stdin TCSANOW silent;
+    Unix.(tcsetattr stdin TCSANOW silent);
     (try
        let s = input_line Stdlib.stdin in
-       tcsetattr stdin TCSANOW default;
+       Unix.(tcsetattr stdin TCSANOW default);
        s
      with
      | exn ->
-       tcsetattr stdin TCSANOW default;
+       Unix.(tcsetattr stdin TCSANOW default);
        raise exn)
 ;;
 
@@ -36,4 +34,4 @@ let main () =
   print_endline ("\nYou entered: " ^ passwd)
 ;;
 
-handle_unix_error main ()
+Unix.handle_unix_error main ()

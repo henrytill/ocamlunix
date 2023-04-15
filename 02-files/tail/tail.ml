@@ -1,5 +1,3 @@
-open Unix
-
 let get_indices bytes : int list =
   let rec loop start acc =
     try
@@ -67,18 +65,18 @@ let rec drop n xs =
 ;;
 
 let tail filename n =
-  let fd = openfile filename [ O_RDONLY ] 0 in
-  let file_size = lseek fd 0 SEEK_END in
+  let fd = Unix.(openfile filename [ O_RDONLY ] 0) in
+  let file_size = Unix.(lseek fd 0 SEEK_END) in
   let max_size = 4096 in
   let rec loop pos acc =
     let chunk_size = min pos max_size in
     let acc_bytes = Bytes.extend acc chunk_size 0 in
     let start_pos = pos - chunk_size in
-    ignore (lseek fd start_pos SEEK_SET);
-    ignore (read fd acc_bytes 0 chunk_size);
+    ignore Unix.(lseek fd start_pos SEEK_SET);
+    ignore Unix.(read fd acc_bytes 0 chunk_size);
     let xs = lines acc_bytes in
     let num_lines = Array.length xs in
     if num_lines >= n then Array.sub xs (num_lines - n) n else loop start_pos acc_bytes
   in
-  Misc.try_finalize (loop file_size) Bytes.empty close fd
+  Misc.try_finalize (loop file_size) Bytes.empty Unix.close fd
 ;;

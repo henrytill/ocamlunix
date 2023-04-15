@@ -1,5 +1,3 @@
-open Unix
-
 let input_int = input_binary_int
 let output_int = output_binary_int
 
@@ -34,14 +32,14 @@ let read_first_primes input count =
 let rec filter input =
   try
     let first_primes = read_first_primes input 1000 in
-    let pipe_out, pipe_in = pipe () in
-    match fork () with
+    let pipe_out, pipe_in = Unix.pipe () in
+    match Unix.fork () with
     | 0 ->
-      close pipe_in;
-      filter (in_channel_of_descr pipe_out)
+      Unix.close pipe_in;
+      filter (Unix.in_channel_of_descr pipe_out)
     | p ->
-      close pipe_out;
-      let output = out_channel_of_descr pipe_in in
+      Unix.close pipe_out;
+      let output = Unix.out_channel_of_descr pipe_in in
       (try
          while true do
            let n = input_int input in
@@ -52,7 +50,7 @@ let rec filter input =
        with
        | End_of_file ->
          close_out output;
-         ignore (waitpid [] p))
+         ignore (Unix.waitpid [] p))
   with
   | End_of_file -> ()
 ;;
@@ -62,17 +60,17 @@ let sieve () =
     try int_of_string Sys.argv.(1) with
     | _ -> max_int
   in
-  let pipe_out, pipe_in = pipe () in
-  match fork () with
+  let pipe_out, pipe_in = Unix.pipe () in
+  match Unix.fork () with
   | 0 ->
-    close pipe_in;
-    filter (in_channel_of_descr pipe_out)
+    Unix.close pipe_in;
+    filter (Unix.in_channel_of_descr pipe_out)
   | p ->
-    close pipe_out;
-    let output = out_channel_of_descr pipe_in in
+    Unix.close pipe_out;
+    let output = Unix.out_channel_of_descr pipe_in in
     generate len output;
     close_out output;
-    ignore (waitpid [] p)
+    ignore (Unix.waitpid [] p)
 ;;
 
-let () = handle_unix_error sieve ()
+let () = Unix.handle_unix_error sieve ()

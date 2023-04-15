@@ -1,5 +1,3 @@
-open Unix
-
 let input_int = input_binary_int
 let output_int = output_binary_int
 
@@ -34,9 +32,9 @@ let read_first_primes input count =
 let rec filter input =
   try
     let first_primes = read_first_primes input 1000 in
-    let pipe_out, pipe_in = pipe () in
-    let p = Thread.create filter (in_channel_of_descr pipe_out) in
-    let output = out_channel_of_descr pipe_in in
+    let pipe_out, pipe_in = Unix.pipe () in
+    let p = Thread.create filter (Unix.in_channel_of_descr pipe_out) in
+    let output = Unix.out_channel_of_descr pipe_in in
     try
       while true do
         let n = input_int input in
@@ -57,12 +55,12 @@ let sieve () =
     try int_of_string Sys.argv.(1) with
     | _ -> max_int
   in
-  let pipe_out, pipe_in = pipe () in
-  let k = Thread.create filter (in_channel_of_descr pipe_out) in
-  let output = out_channel_of_descr pipe_in in
+  let pipe_out, pipe_in = Unix.pipe () in
+  let k = Thread.create filter (Unix.in_channel_of_descr pipe_out) in
+  let output = Unix.out_channel_of_descr pipe_in in
   generate len output;
   close_out output;
   Thread.join k
 ;;
 
-let () = handle_unix_error sieve ()
+let () = Unix.handle_unix_error sieve ()

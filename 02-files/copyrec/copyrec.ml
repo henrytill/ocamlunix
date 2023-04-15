@@ -1,23 +1,22 @@
-open Unix
-
-let set_infos filename infos =
-  utimes filename infos.st_atime infos.st_mtime;
-  chmod filename infos.st_perm;
-  try chown filename infos.st_uid infos.st_gid with
-  | Unix_error (EPERM, _, _) -> ()
+let set_infos : string -> Unix.stats -> unit =
+ fun filename infos ->
+  Unix.utimes filename infos.st_atime infos.st_mtime;
+  Unix.chmod filename infos.st_perm;
+  try Unix.chown filename infos.st_uid infos.st_gid with
+  | Unix.Unix_error (EPERM, _, _) -> ()
 ;;
 
-let copied_files = (Hashtbl.create 53 : (int * int, string) Hashtbl.t)
+let copied_files : (int * int, string) Hashtbl.t = Hashtbl.create 53
 
 let rec copy_rec source dest =
-  let infos = lstat source in
+  let infos = Unix.lstat source in
   match infos.st_kind with
   | S_REG ->
     if infos.st_nlink > 1
     then (
       try
         let dest' = Hashtbl.find copied_files (infos.st_dev, infos.st_ino) in
-        link dest' dest
+        Unix.link dest' dest
       with
       | Not_found ->
         Hashtbl.add copied_files (infos.st_dev, infos.st_ino) dest;
@@ -27,10 +26,10 @@ let rec copy_rec source dest =
       File_copy.file_copy false source dest;
       set_infos dest infos)
   | S_LNK ->
-    let link = readlink source in
-    symlink link dest
+    let link = Unix.readlink source in
+    Unix.symlink link dest
   | S_DIR ->
-    mkdir dest 0o200;
+    Unix.mkdir dest 0o200;
     Misc.iter_dir
       (fun file ->
         if file <> Filename.current_dir_name && file <> Filename.parent_dir_name
@@ -50,4 +49,4 @@ let main () =
     exit 0)
 ;;
 
-handle_unix_error main ()
+Unix.handle_unix_error main ()

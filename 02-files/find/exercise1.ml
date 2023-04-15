@@ -1,7 +1,6 @@
-open Unix
-
 let main () =
-  let action p infos =
+  let action : string -> Unix.stats -> bool =
+   fun p infos ->
     let b = not (infos.st_kind = S_DIR || Filename.basename p = "CVS") in
     if b then print_endline p;
     b
@@ -9,9 +8,9 @@ let main () =
   let errors = ref false in
   let error (e, _, b) =
     errors := true;
-    prerr_endline (b ^ ": " ^ error_message e)
+    prerr_endline (b ^ ": " ^ Unix.error_message e)
   in
   Findlib.find error action false max_int [ "." ]
 ;;
 
-handle_unix_error main ()
+Unix.handle_unix_error main ()

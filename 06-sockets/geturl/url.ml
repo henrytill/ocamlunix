@@ -1,5 +1,3 @@
-open Unix
-
 exception Error of string
 
 let error err mes = raise (Error (err ^ ": " ^ mes))
@@ -58,7 +56,7 @@ let parse_url url =
 
 let send_get url sock =
   let s = Printf.sprintf "GET %s\r\n" url in
-  ignore (write sock (Bytes.of_string s) 0 (String.length s))
+  ignore (Unix.write sock (Bytes.of_string s) 0 (String.length s))
 ;;
 
 let get_url proxy url fdout =
@@ -68,18 +66,18 @@ let get_url proxy url fdout =
     | Some host -> parse_host host, url
   in
   let hostaddr =
-    try inet_addr_of_string hostname with
+    try Unix.inet_addr_of_string hostname with
     | Failure _ ->
-      (try (gethostbyname hostname).h_addr_list.(0) with
+      (try Unix.(gethostbyname hostname).h_addr_list.(0) with
        | Not_found -> error hostname "Host not found")
   in
-  let sock = socket PF_INET SOCK_STREAM 0 in
+  let sock = Unix.(socket PF_INET SOCK_STREAM 0) in
   Misc.try_finalize
     (fun () ->
-      connect sock (ADDR_INET (hostaddr, port));
+      Unix.connect sock (ADDR_INET (hostaddr, port));
       send_get path sock;
       Misc.retransmit sock fdout)
     ()
-    close
+    Unix.close
     sock
 ;;

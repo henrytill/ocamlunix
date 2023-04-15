@@ -1,5 +1,3 @@
-open Unix
-
 exception Found
 
 let simple_search cond v =
@@ -14,7 +12,7 @@ let simple_search cond v =
 
 let fork_search cond v =
   let n = Array.length v in
-  match fork () with
+  match Unix.fork () with
   | 0 ->
     (* child process *)
     let found = simple_search cond (Array.sub v (n / 2) (n - (n / 2))) in
@@ -22,7 +20,7 @@ let fork_search cond v =
   | _ ->
     (* parent process *)
     let found = simple_search cond (Array.sub v 0 (n / 2)) in
-    (match wait () with
+    (match Unix.wait () with
      | _, WEXITED retcode -> found || retcode = 0
      | _, _ -> failwith "fork_search")
 ;;
