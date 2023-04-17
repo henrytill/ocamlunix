@@ -27,4 +27,4 @@ let find () =
   if !errors then exit 1
 ;;
 
-Unix.handle_unix_error find ()
+let () = Unix.handle_unix_error find ()

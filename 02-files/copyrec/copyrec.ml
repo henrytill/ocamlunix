@@ -49,4 +49,4 @@ let main () =
     exit 0)
 ;;
 
-Unix.handle_unix_error main ()
+let () = Unix.handle_unix_error main ()

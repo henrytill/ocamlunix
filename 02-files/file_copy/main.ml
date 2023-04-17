@@ -25,4 +25,4 @@ let copy () =
     exit 1
 ;;
 
-Unix.handle_unix_error copy ()
+let () = Unix.handle_unix_error copy ()

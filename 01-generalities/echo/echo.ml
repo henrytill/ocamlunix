@@ -10,4 +10,4 @@ let echo () =
     print_newline ())
 ;;
 
-echo ()
+let () = echo ()

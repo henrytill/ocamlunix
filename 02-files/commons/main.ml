@@ -8,4 +8,4 @@ let print () =
   | Commons.End_of_file -> Commons.close_in chan
 ;;
 
-Unix.handle_unix_error print ()
+let () = Unix.handle_unix_error print ()

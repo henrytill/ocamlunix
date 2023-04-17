@@ -10,4 +10,4 @@ let main () =
   Array.iter (fun line -> print_bytes line) xs
 ;;
 
-Unix.handle_unix_error main ()
+let () = Unix.handle_unix_error main ()
