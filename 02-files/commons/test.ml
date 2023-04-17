@@ -1,5 +1,5 @@
 let read_file_as_string file =
-  let actual = ref "" in
+  let actual = ref String.empty in
   let chan = Commons.open_in file in
   (try
      while true do
@@ -23,5 +23,7 @@ let round_trip_string_test () =
   Alcotest.(check string) "same string" expected (round_trip_string expected)
 ;;
 
-let test_set = [ "round trip a string to a file", `Quick, round_trip_string_test ]
-let () = Alcotest.run "Commons" [ "test_set", test_set ]
+let () =
+  let test_set = [ "round trip a string to a file", `Quick, round_trip_string_test ] in
+  Alcotest.run "Commons" [ "test_set", test_set ]
+;;

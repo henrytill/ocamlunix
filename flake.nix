@@ -21,9 +21,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         on = opam-nix.lib.${system};
-        args = {
-          resolveArgs.with-test = true;
-        };
+        args = { resolveArgs.with-test = true; };
         src = builtins.path { path = ./.; name = "ocamlunix-src"; };
         query = { ocaml-base-compiler = "4.14.1"; };
         scope = on.buildDuneProject args package src query;

@@ -1,6 +1,6 @@
 let main () =
   let num = ref 10 in
-  let file = ref "" in
+  let file = ref String.empty in
   let usage_string = "Usage: " ^ Sys.argv.(0) ^ " [OPTION]... [FILE]..." in
   let opt_list =
     [ "-n", Arg.Int (( := ) num), "output the last NUM lines, instead of the last 10;" ]
