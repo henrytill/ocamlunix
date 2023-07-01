@@ -36,18 +36,18 @@ let write_header_to_buffer source infos kind =
   put 31 Unix.(getpwuid infos.st_uid).pw_name 265;
   put 31 Unix.(getgrgid infos.st_gid).gr_name 297;
   (* Files dev and rdev are only used for special files, which we omit *)
-  put_char
-    (match kind with
-    | REG -> '0'
+  begin
+    match kind with
+    | REG -> put_char '0' 156
     | LINK s ->
         put_path s 157;
-        '1'
+        put_char '1' 156
     | LNK s ->
         put_path s 157;
-        '2'
-    | DIR -> '5'
-    | _ -> failwith "Special files not implemented")
-    156;
+        put_char '2' 156
+    | DIR -> put_char '5' 156
+    | _ -> failwith "Special files not implemented"
+  end;
   let rec sum s i =
     if i < 0 then
       s

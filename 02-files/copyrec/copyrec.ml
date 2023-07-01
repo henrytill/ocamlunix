@@ -1,8 +1,8 @@
-let set_infos : string -> Unix.stats -> unit =
- fun filename infos ->
-  Unix.utimes filename infos.st_atime infos.st_mtime;
-  Unix.chmod filename infos.st_perm;
-  try Unix.chown filename infos.st_uid infos.st_gid with Unix.Unix_error (EPERM, _, _) -> ()
+let set_infos filename infos =
+  let open Unix in
+  utimes filename infos.st_atime infos.st_mtime;
+  chmod filename infos.st_perm;
+  try chown filename infos.st_uid infos.st_gid with Unix_error (EPERM, _, _) -> ()
 
 let copied_files : (int * int, string) Hashtbl.t = Hashtbl.create 53
 

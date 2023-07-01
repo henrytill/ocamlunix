@@ -1,6 +1,6 @@
 let main () =
-  let action : string -> Unix.stats -> bool =
-   fun p infos ->
+  let action p infos =
+    let open Unix in
     let b = not (infos.st_kind = S_DIR || Filename.basename p = "CVS") in
     if b then print_endline p;
     b

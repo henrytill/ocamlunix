@@ -129,7 +129,8 @@ let rec find_regular r list =
 
 and find_file name list =
   match list with
-  | r :: rest -> if r.header.name = name then find_regular r rest else find_file name rest
+  | r :: rest when r.header.name = name -> find_regular r rest
+  | _ :: rest -> find_file name rest
   | [] -> error name "Link not found (corrupted archive)"
 
 let copy_file file output =
@@ -263,10 +264,12 @@ let find_and_copy_v2 tarfile filename =
   let inode =
     try find false archive (explode filename) with Not_found -> error filename "File not found"
   in
-  (match inode.record with
-  | Some ({ header = { kind = REG | CONT; _ }; _ } as r) -> copy_file r Unix.stdout
-  | Some _ -> error filename "Not a regular file"
-  | None -> error filename "Not found");
+  begin
+    match inode.record with
+    | Some ({ header = { kind = REG | CONT; _ }; _ } as r) -> copy_file r Unix.stdout
+    | Some _ -> error filename "Not a regular file"
+    | None -> error filename "Not found"
+  end;
   Unix.close fd
 
 let readtar_v2 () =
@@ -305,9 +308,11 @@ let set_infos header =
   Unix.chmod header.name header.perm;
   let mtime = float header.mtime in
   Unix.utimes header.name mtime mtime;
-  (match header.kind with
-  | LNK _ -> ()
-  | _ -> Unix.chmod header.name header.perm);
+  begin
+    match header.kind with
+    | LNK _ -> ()
+    | _ -> Unix.chmod header.name header.perm
+  end;
   try Unix.chown header.name header.uid header.gid with Unix.Unix_error (EPERM, _, _) -> ()
 
 let verbose = ref true
@@ -346,17 +351,19 @@ let untar_file_collect_dirs file dirs =
         fh :: dirs)
   | x ->
       mkpath fh.name default_dir_perm;
-      (match x with
-      | REG | CONT ->
-          let flags = Unix.[ O_WRONLY; O_TRUNC; O_CREAT ] in
-          let out = Unix.openfile fh.name flags default_file_perm in
-          protect (copy_file file) out Unix.close out
-      | LNK f -> Unix.symlink f fh.name
-      | LINK f ->
-          (try if Unix.(stat fh.name).st_kind = S_REG then Unix.unlink fh.name
-           with Unix.Unix_error (_, _, _) -> ());
-          Unix.link f fh.name
-      | _ -> assert false);
+      begin
+        match x with
+        | REG | CONT ->
+            let flags = Unix.[ O_WRONLY; O_TRUNC; O_CREAT ] in
+            let out = Unix.openfile fh.name flags default_file_perm in
+            protect (copy_file file) out Unix.close out
+        | LNK f -> Unix.symlink f fh.name
+        | LINK f ->
+            (try if Unix.(stat fh.name).st_kind = S_REG then Unix.unlink fh.name
+             with Unix.Unix_error (_, _, _) -> ());
+            Unix.link f fh.name
+        | _ -> assert false
+      end;
       set_infos fh;
       dirs
 
