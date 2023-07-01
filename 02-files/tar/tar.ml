@@ -10,9 +10,9 @@ type archive =
 
 let warning path message = prerr_endline (path ^ ": " ^ message)
 
-let write_header_to_buffer : string -> Unix.stats -> Tarlib.kind -> unit =
- fun source infos kind ->
-  let size = if kind = REG then infos.st_size else 0 in
+let write_header_to_buffer source infos kind =
+  let open Unix in
+  let size = if kind = Tarlib.REG then infos.st_size else 0 in
   Tarlib.(Bytes.fill buffer 0 block_size '\000');
   let put len string offset =
     String.blit string 0 Tarlib.buffer offset (min (String.length string) len)
