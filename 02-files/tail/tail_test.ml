@@ -10,17 +10,12 @@ module Tail : Common.Tests = struct
       ()
       (fun () -> close_in channel)
       ()
-  ;;
 
   let file_bytes_test filename () =
     let file_bytes = load_file filename in
     let expected = Tail.lines file_bytes in
     let file_length = Array.length expected in
-    Alcotest.(check (array bytes))
-      "same element"
-      expected
-      (Tail.tail filename file_length)
-  ;;
+    Alcotest.(check (array bytes)) "same element" expected (Tail.tail filename file_length)
 
-  let test_set = [ "file_bytes_test common.ml", `Quick, file_bytes_test "common.ml" ]
+  let test_set = [ ("file_bytes_test common.ml", `Quick, file_bytes_test "common.ml") ]
 end

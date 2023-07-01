@@ -4,8 +4,6 @@ let print () =
     while true do
       print_char (Commons.input_char chan)
     done
-  with
-  | Commons.End_of_file -> Commons.close_in chan
-;;
+  with Commons.End_of_file -> Commons.close_in chan
 
 let () = Unix.handle_unix_error print ()

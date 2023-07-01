@@ -1,2 +1,7 @@
-profile = janestreet
 version = 0.25.1
+profile = conventional
+break-cases = toplevel
+break-infix = fit-or-vertical
+if-then-else = fit-or-vertical
+margin = 100
+type-decl = sparse

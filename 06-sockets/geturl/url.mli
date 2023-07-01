@@ -3,10 +3,10 @@ exception Error of string
 val error : string -> string -> 'a
 val handle_error : ('a -> 'b) -> 'a -> 'b
 
-type regexp =
-  { regexp : Str.regexp
-  ; fields : (int * string option) list
-  }
+type regexp = {
+  regexp : Str.regexp;
+  fields : (int * string option) list;
+}
 
 val regexp_match : regexp -> string -> string list option
 val parse_host : string -> string * int

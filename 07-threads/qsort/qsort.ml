@@ -2,21 +2,17 @@ let swap arr i j =
   let tmp = Array.unsafe_get arr i in
   Array.unsafe_set arr i (Array.unsafe_get arr j);
   Array.unsafe_set arr j tmp
-;;
 
 let qsort cmp arr =
   let rec go lo hi =
-    if hi - lo > 0
-    then (
+    if hi - lo > 0 then (
       let mid = (lo + hi) lsr 1 in
       if cmp arr.(mid) arr.(lo) then swap arr mid lo;
-      if cmp arr.(hi) arr.(mid)
-      then (
+      if cmp arr.(hi) arr.(mid) then (
         swap arr mid hi;
         if cmp arr.(mid) arr.(lo) then swap arr mid lo);
       let pivot = arr.(mid) in
-      let i = ref (lo + 1)
-      and j = ref (hi - 1) in
+      let i = ref (lo + 1) and j = ref (hi - 1) in
       while !i < !j do
         while not (cmp pivot arr.(!i)) do
           incr i
@@ -32,11 +28,9 @@ let qsort cmp arr =
       Thread.join v)
   in
   go 0 (Array.length arr - 1)
-;;
 
 let () =
   let arr = [| 5; 1; 9; 4; 8; 2; 7; 3; 6 |] in
   qsort ( < ) arr;
   Array.iter (fun x -> print_string (string_of_int x ^ " ")) arr;
   print_newline ()
-;;

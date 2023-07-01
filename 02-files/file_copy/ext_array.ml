@@ -8,6 +8,4 @@ let for_all pred arr =
       if not (pred arr.(i)) then raise Found
     done;
     true
-  with
-  | Found -> false
-;;
+  with Found -> false

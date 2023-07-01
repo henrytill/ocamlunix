@@ -1,6 +1,5 @@
 let server () =
-  if Array.length Sys.argv < 2
-  then (
+  if Array.length Sys.argv < 2 then (
     prerr_endline "Usage: client <port> <command> [arg1 ... argn]";
     exit 2);
   let port = int_of_string Sys.argv.(1) in
@@ -11,8 +10,7 @@ let server () =
     (* log information *)
     Unix.(
       match client_addr with
-      | ADDR_INET (caller, _) ->
-        prerr_endline ("Connection from " ^ string_of_inet_addr caller)
+      | ADDR_INET (caller, _) -> prerr_endline ("Connection from " ^ string_of_inet_addr caller)
       | ADDR_UNIX _ -> prerr_endline "Connection from the Unix domain (???)");
     (* connection treatment *)
     let service (s, _) =
@@ -25,6 +23,5 @@ let server () =
     Misc.double_fork_treatment sock service client
   in
   Misc.tcp_server treat addr
-;;
 
 let () = Unix.handle_unix_error server ()
