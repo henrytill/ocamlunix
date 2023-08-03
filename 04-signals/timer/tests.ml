@@ -14,8 +14,7 @@ let interval_timer_status_t =
 
 let get_timer () =
   let timer = Unix.ITIMER_REAL in
-  Alcotest.(check interval_timer_status_t)
-    "same timer" (Unix.getitimer timer)
+  Alcotest.check interval_timer_status_t "same timer" (Unix.getitimer timer)
     (Timer.get_timer (Timer.new_timer timer (fun () -> ())))
 
 let test_set = [ ("Timer.get_timer", `Quick, get_timer) ]
