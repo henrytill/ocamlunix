@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/base:bullseye
+FROM mcr.microsoft.com/devcontainers/base:debian
 
 ARG DEFAULT_SWITCH=4.14.1
 
@@ -18,4 +18,4 @@ RUN opam init --disable-sandboxing --auto-setup -q && \
     eval $(opam env)
 
 # Install ocaml-lsp-server, ocamlformat, and dune
-RUN opam install -yq ocaml-lsp-server ocamlformat dune depext
+RUN opam install -yq ocaml-lsp-server ocamlformat dune
