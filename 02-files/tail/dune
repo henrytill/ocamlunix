@@ -9,6 +9,6 @@
  (libraries tail))
 
 (test
- (name all_tests)
- (modules all_tests common lines_test tail_test)
+ (name tests)
+ (modules tests)
  (libraries alcotest misc tail))
