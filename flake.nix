@@ -9,7 +9,6 @@
     flake-compat = {
       url = "github:edolstra/flake-compat";
       flake = false;
-      follows = "opam-nix/flake-compat";
     };
   };
 

@@ -3,6 +3,22 @@
     "flake-compat": {
       "flake": false,
       "locked": {
+        "lastModified": 1696426674,
+        "narHash": "sha256-kvjfFW7WAETZlt09AgDn1MrtKzP7t90Vf7vypd3OL1U=",
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "rev": "0f9255e01c2351cc7d116c072cb317785dd33b33",
+        "type": "github"
+      },
+      "original": {
+        "owner": "edolstra",
+        "repo": "flake-compat",
+        "type": "github"
+      }
+    },
+    "flake-compat_2": {
+      "flake": false,
+      "locked": {
         "lastModified": 1627913399,
         "narHash": "sha256-hY8g6H2KFL8ownSiFeMOjwPC8P0ueXpCVEbxgda3pko=",
         "owner": "edolstra",
@@ -65,7 +81,7 @@
     },
     "opam-nix": {
       "inputs": {
-        "flake-compat": "flake-compat",
+        "flake-compat": "flake-compat_2",
         "flake-utils": "flake-utils",
         "mirage-opam-overlays": "mirage-opam-overlays",
         "nixpkgs": "nixpkgs",
@@ -74,11 +90,11 @@
         "opam2json": "opam2json"
       },
       "locked": {
-        "lastModified": 1696425356,
-        "narHash": "sha256-OVv42YGPkUb1pj6LcXLTZJSIVsHK96AmDp1Dk1O7NJ0=",
+        "lastModified": 1698410402,
+        "narHash": "sha256-GmNqvLcmCYTai/Pi4R0/UF5NxT8EGG4JJqwvp5/uL+A=",
         "owner": "tweag",
         "repo": "opam-nix",
-        "rev": "778f91cbf4ead8ab990db98dc2430bf65afca326",
+        "rev": "4d42f3d5a3161d7100b37c830a848fcf415409d5",
         "type": "github"
       },
       "original": {
@@ -142,10 +158,7 @@
     },
     "root": {
       "inputs": {
-        "flake-compat": [
-          "opam-nix",
-          "flake-compat"
-        ],
+        "flake-compat": "flake-compat",
         "flake-utils": [
           "opam-nix",
           "flake-utils"
