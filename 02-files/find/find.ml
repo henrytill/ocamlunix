@@ -19,7 +19,11 @@ let find () =
     errors := true;
     prerr_endline (c ^ ": " ^ Unix.error_message e)
   in
-  Findlib.find on_error action !follow !maxdepth
+  Findlib.find
+    on_error
+    action
+    !follow
+    !maxdepth
     (if !roots = [] then [ Filename.current_dir_name ] else List.rev !roots);
   if !errors then exit 1
 

@@ -7,7 +7,8 @@ module Lines_tests : Tests = struct
     Bytes.of_string "this is the first line\nthis is the second line\nthis is the third line\n"
 
   let expected_test_bytes : bytes array =
-    Array.map Bytes.of_string
+    Array.map
+      Bytes.of_string
       [| "this is the first line\n"; "this is the second line\n"; "this is the third line\n" |]
 
   let test_bytes_no_trailing_newline : bytes =
@@ -18,7 +19,8 @@ module Lines_tests : Tests = struct
        this is the fourth line"
 
   let expected_test_bytes_no_trailing_newline : bytes array =
-    Array.map Bytes.of_string
+    Array.map
+      Bytes.of_string
       [|
         "this is the first line\n";
         "this is the second line\n";
@@ -31,7 +33,8 @@ module Lines_tests : Tests = struct
 
   let test_bytes_no_trailing_newline_test () =
     Alcotest.(check (array bytes))
-      "same elements" expected_test_bytes_no_trailing_newline
+      "same elements"
+      expected_test_bytes_no_trailing_newline
       (Tail.lines test_bytes_no_trailing_newline)
 
   let test_set =

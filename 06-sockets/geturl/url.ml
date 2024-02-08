@@ -74,4 +74,6 @@ let get_url proxy url fdout =
       Unix.connect sock (ADDR_INET (hostaddr, port));
       send_get path sock;
       Misc.retransmit sock fdout)
-    () Unix.close sock
+    ()
+    Unix.close
+    sock
