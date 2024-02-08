@@ -10,21 +10,17 @@ let find () =
     ]
   in
   Arg.parse opt_list (fun f -> roots := f :: !roots) usage_string;
-  let action p _ =
-    print_endline p;
-    true
-  in
   let errors = ref false in
   let on_error (e, _, c) =
     errors := true;
     prerr_endline (c ^ ": " ^ Unix.error_message e)
   in
-  Findlib.find
-    on_error
-    action
-    !follow
-    !maxdepth
-    (if !roots = [] then [ Filename.current_dir_name ] else List.rev !roots);
+  let action p _ =
+    print_endline p;
+    true
+  in
+  let roots = if !roots = [] then [ Filename.current_dir_name ] else List.rev !roots in
+  Findlib.find on_error action !follow !maxdepth roots;
   if !errors then exit 1
 
 let () = Unix.handle_unix_error find ()
