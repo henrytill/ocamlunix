@@ -1,3 +1,5 @@
+#include "ex.h"
+
 #include <errno.h>
 #include <string.h>
 
@@ -5,8 +7,6 @@
 #include <caml/mlvalues.h>
 #include <caml/signals.h>
 #include <caml/unixsupport.h>
-
-#include "ex.h"
 
 CAMLprim value caml_single_write(value fd, value buf, value vofs, value vlen)
 {
