@@ -14,8 +14,7 @@
 (package
  (name ocamlunix)
  (synopsis "Unix system programming in OCaml")
- (description
-  "Work from Leroy and R\195\169my's 'Unix system programming in OCaml'")
+ (description "Work from Leroy and Rémy's 'Unix system programming in OCaml'")
  (depends
   (ocaml
    (>= 4.13.0))
