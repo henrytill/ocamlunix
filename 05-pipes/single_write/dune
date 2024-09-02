@@ -8,9 +8,9 @@
 (library
  (name single_write)
  (modules single_write)
- (libraries ex))
+ (libraries ex unix))
 
 (executable
  (name demo)
  (modules demo)
- (libraries misc single_write))
+ (libraries misc single_write unix))

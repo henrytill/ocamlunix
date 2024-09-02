@@ -1,12 +1,12 @@
 (library
  (name findlib)
  (modules findlib)
- (libraries misc))
+ (libraries misc unix))
 
 (executable
  (name exercise1)
  (modules exercise1)
- (libraries findlib))
+ (libraries findlib unix))
 
 (executable
  (name find)
@@ -16,4 +16,4 @@
 (executable
  (name getcwd)
  (modules exercise2 getcwd)
- (libraries misc))
+ (libraries misc unix))
