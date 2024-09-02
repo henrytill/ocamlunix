@@ -14,7 +14,7 @@ let psearch k cond v =
   let slices = Array.init (n / k) slice in
   let found = ref false in
   let pcond v =
-    if !found then Thread.exit ();
+    if !found then raise Thread.Exit;
     cond v
   in
   let search v = if simple_search pcond v then found := true in
